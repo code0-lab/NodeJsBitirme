@@ -215,3 +215,8 @@ body.theme-dark .theme-toggle svg .moon { fill: #eceff1; filter: drop-shadow(0 0
 .rune:focus-visible .text { display: none; }
 .rune:hover .runes,
 .rune:focus-visible .runes { display: inline-block; }
+/* Runik SVG renk override: kırmızı */
+.rune .runes svg .rune-line { stroke: #ff0000 !important; }
+.rune .runes svg [fill="#000000"] { fill: #ff0000 !important; }
+/* İsteğe bağlı: biraz daha kalın çizgi */
+.rune .runes svg .rune-line { stroke-width: 9 !important; }
