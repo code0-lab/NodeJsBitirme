@@ -11,6 +11,7 @@ async function start() {
     await connectDB();
     app.listen(port, () => {
       console.log(`Sunucu http://localhost:${port} üzerinde çalışıyor`);
+      console.log(`Swagger dokümantasyonu: http://localhost:${port}/api-docs`);
     });
   } catch (err) {
     console.error('Başlatma hatası:', err);

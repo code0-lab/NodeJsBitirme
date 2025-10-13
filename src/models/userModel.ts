@@ -1,0 +1,60 @@
+import mongoose, { Schema, Document, Model } from 'mongoose';
+import bcrypt from 'bcryptjs';
+import { isValidEmail, isValidPassword } from '../utils/validators';
+
+export type UserRole = 'user' | 'admin';
+
+export interface IUser extends Document {
+  email: string;
+  password: string;
+  name?: string;
+  role: UserRole;
+  createdAt: Date;
+  updatedAt: Date;
+  comparePassword(candidate: string): Promise<boolean>;
+}
+
+const userSchema = new Schema<IUser>(
+  {
+    email: {
+      type: String,
+      required: true,
+      unique: true, // unique zaten indeks oluşturur
+      lowercase: true,
+      trim: true,
+      validate: { validator: isValidEmail, message: 'Geçerli bir e-posta girin' }
+    },
+    password: {
+      type: String,
+      required: true,
+      validate: { validator: isValidPassword, message: 'Şifre en az 8 karakter olmalı' }
+    },
+    name: { type: String, trim: true },
+    role: { type: String, enum: ['user', 'admin'], default: 'user', required: true }
+  },
+  { timestamps: true }
+);
+
+// Bu satırı kaldırıyoruz: duplicate index uyarısı veriyor
+// userSchema.index({ email: 1 }, { unique: true });
+
+userSchema.pre('save', async function (next) {
+  const user = this as IUser;
+  if (!user.isModified('password')) return next();
+  try {
+    const salt = await bcrypt.genSalt(10);
+    user.password = await bcrypt.hash(user.password, salt);
+    next();
+  } catch (err) {
+    next(err as Error);
+  }
+});
+
+userSchema.methods.comparePassword = function (candidate: string) {
+  return bcrypt.compare(candidate, this.password);
+};
+
+export const User: Model<IUser> =
+  mongoose.models.User || mongoose.model<IUser>('User', userSchema);
+
+export default User;
