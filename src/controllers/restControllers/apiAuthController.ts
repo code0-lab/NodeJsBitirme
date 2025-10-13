@@ -1,25 +1,9 @@
 import { Request, Response } from 'express';
-import User from '../../models/userModel';
-import { isValidEmail, isValidPassword } from '../../utils/validators';
+import { registerUser, loginUser, AppError } from '../../services/authService';
 
 export async function register(req: Request, res: Response) {
-  const { email, password, name } = req.body as { email?: string; password?: string; name?: string };
-
-  if (!email || !isValidEmail(email)) {
-    return res.status(400).json({ error: 'Geçerli bir e-posta girin.' });
-  }
-  if (!password || !isValidPassword(password)) {
-    return res.status(400).json({ error: 'Şifre en az 8 karakter olmalı.' });
-  }
-
   try {
-    const exists = await User.findOne({ email });
-    if (exists) {
-      return res.status(409).json({ error: 'Bu e-posta zaten kayıtlı.' });
-    }
-
-    const created = await User.create({ email, password, name, role: 'user' });
-
+    const created = await registerUser(req.body as { email?: string; password?: string; name?: string });
     return res.status(201).json({
       id: created._id,
       email: created.email,
@@ -27,6 +11,22 @@ export async function register(req: Request, res: Response) {
       role: created.role
     });
   } catch (err) {
-    return res.status(500).json({ error: 'Beklenmeyen bir hata oluştu.' });
+    const status = err instanceof AppError ? err.status : 500;
+    const msg = err instanceof AppError ? err.message : 'Beklenmeyen bir hata oluştu.';
+    return res.status(status).json({ error: msg });
+  }
+}
+
+export async function login(req: Request, res: Response) {
+  try {
+    const { user, token } = await loginUser(req.body as { email?: string; password?: string });
+    return res.status(200).json({
+      token,
+      user: { id: user._id, email: user.email, name: user.name, role: user.role }
+    });
+  } catch (err) {
+    const status = err instanceof AppError ? err.status : 500;
+    const msg = err instanceof AppError ? err.message : 'Beklenmeyen bir hata oluştu.';
+    return res.status(status).json({ error: msg });
   }
 }

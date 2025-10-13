@@ -11,6 +11,7 @@ import authRouter from './routes/auth';
 import swaggerUi from 'swagger-ui-express';
 import { swaggerSpec } from './config/swagger';
 import apiRouter from './routes/api';
+import blogRouter from './routes/blog';
 
 const app = express();
 
@@ -33,6 +34,7 @@ app.use(express.urlencoded({ extended: true }));
 
 app.use('/', indexRouter);
 app.use('/auth', authRouter);
+app.use('/blogs', blogRouter);
 app.use('/api', apiRouter);
 app.use('/api-docs', swaggerUi.serve, swaggerUi.setup(swaggerSpec));
 

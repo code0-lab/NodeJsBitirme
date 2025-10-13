@@ -1,0 +1,47 @@
+<!DOCTYPE html>
+<html lang="tr">
+<head>
+  <meta charset="UTF-8" />
+  <meta name="viewport" content="width=device-width, initial-scale=1" />
+  <title><%= title %></title>
+  <link rel="stylesheet" href="/styles/main.css" />
+</head>
+<body>
+  <%- include('../partials/navbar') %>
+  <main class="container">
+    <section class="auth-card">
+      <h1 class="auth-title"><%= title %></h1>
+      <p class="auth-subtitle">Hesabına giriş yap ve Yggdrasil ile keşvetmeye başla...</p>
+      <% if (typeof success !== 'undefined' && success) { %>
+        <div class="alert alert-success"><%= success %></div>
+      <% } %>
+      <% if (Array.isArray(errors) && errors.length) { %>
+        <div class="alert alert-error">
+          <ul style="margin:0; padding-left: 18px;">
+            <% errors.forEach(function(err) { %>
+              <li><%= err %></li>
+            <% }); %>
+          </ul>
+        </div>
+      <% } %>
+      <form method="post" action="/auth/login">
+        <div class="form-group">
+          <label for="email">E-posta</label>
+          <input id="email" type="email" name="email"
+                 value="<%= (values && values.email) ? values.email : '' %>" required />
+          <span class="hint">Kayıt sırasında kullandığın e-posta adresini gir.</span>
+        </div>
+        <div class="form-group">
+          <label for="password">Şifre</label>
+          <input id="password" type="password" name="password" required />
+        </div>
+        <div class="form-actions">
+          <button type="submit" class="btn">Giriş Yap</button>
+          <a href="/auth/register" class="btn outline">Kayıt Ol</a>
+        </div>
+      </form>
+    </section>
+  </main>
+  <%- include('../partials/footer') %>
+</body>
+</html>

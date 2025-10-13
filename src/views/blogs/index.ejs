@@ -1,0 +1,39 @@
+<!DOCTYPE html>
+<html lang="tr">
+<head>
+  <meta charset="UTF-8" />
+  <meta name="viewport" content="width=device-width,initial-scale=1" />
+  <title><%= title %></title>
+  <link rel="stylesheet" href="/styles/base.css" />
+  <link rel="stylesheet" href="/styles/components.css" />
+  <link rel="stylesheet" href="/styles/layout.css" />
+  <link rel="stylesheet" href="/styles/pages/blog.css" />
+</head>
+<body>
+  <%- include('../partials/navbar') %>
+
+  <main class="container">
+    <div class="page-header">
+      <h1 class="auth-title">Blog Yazıları</h1>
+      <a class="btn" href="/blogs/new">Yeni Yazı</a>
+    </div>
+
+    <div class="blog-grid">
+      <% blogs.forEach(function(b){ %>
+        <article class="card blog-card">
+          <% if (b.coverImageUrl) { %>
+            <img class="blog-cover" src="<%= b.coverImageUrl %>" alt="<%= b.title %> kapak" />
+          <% } %>
+          <div class="card-body">
+            <h2 class="card-title"><a href="/blogs/<%= b._id %>"><%= b.title %></a></h2>
+            <p class="muted">Yazar: <%= b.author?.name || 'Anonim' %></p>
+            <a class="btn" href="/blogs/<%= b._id %>">Görüntüle</a>
+          </div>
+        </article>
+      <% }) %>
+    </div>
+  </main>
+
+  <%- include('../partials/footer') %>
+</body>
+</html>

@@ -1,0 +1,28 @@
+<!DOCTYPE html>
+<html lang="tr">
+<head>
+  <meta charset="UTF-8" />
+  <meta name="viewport" content="width=device-width,initial-scale=1" />
+  <title><%= title %></title>
+  <link rel="stylesheet" href="/styles/base.css" />
+  <link rel="stylesheet" href="/styles/components.css" />
+  <link rel="stylesheet" href="/styles/layout.css" />
+  <link rel="stylesheet" href="/styles/pages/blog.css" />
+</head>
+<body>
+  <%- include('../partials/navbar') %>
+
+  <main class="container">
+    <article class="auth-card">
+      <header class="auth-title"><%= blog.title %></header>
+      <% if (blog.coverImageUrl) { %>
+        <img class="blog-cover" src="<%= blog.coverImageUrl %>" alt="<%= blog.title %> kapak" />
+      <% } %>
+      <div class="blog-content"><%= blog.content %></div>
+      <p class="muted">Yazar: <%= blog.author?.name || 'Anonim' %></p>
+    </article>
+  </main>
+
+  <%- include('../partials/footer') %>
+</body>
+</html>

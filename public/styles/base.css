@@ -19,6 +19,15 @@ body {
   -webkit-font-smoothing: antialiased;
   text-rendering: optimizeLegibility;
 }
+/* Footer alta yapışsın: esnek düzen */
+body {
+  display: flex;
+  flex-direction: column;
+}
+/* İçerik alanı kalan yüksekliği doldursun */
+main {
+  flex: 1 0 auto;
+}
 
 /* Dark mode değişkenleri */
 body.theme-dark {

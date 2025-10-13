@@ -4,6 +4,9 @@
   padding: 24px 16px;
 }
 
+/* Runic font importu */
+@import url('https://fonts.googleapis.com/css2?family=Noto+Sans+Runic&display=swap');
+
 /* Navbar */
 .navbar {
   background: var(--surface);
@@ -18,8 +21,9 @@
 .navbar a:hover { text-decoration: underline; }
 .navbar-links { list-style: none; display: flex; gap: 1rem; margin: 0; padding: 0; }
 
-.navbar .rune {
-  font-family: 'Norse', 'Noto Sans Runic', 'Segoe UI Symbol', 'Symbola', Georgia, 'Times New Roman', serif;
+.navbar .rune,
+.rune {
+  font-family: 'Noto Sans Runic', 'Segoe UI Symbol', 'Symbola', Georgia, 'Times New Roman', serif;
   font-size: 1.25rem;
   letter-spacing: 0.08em;
 }
@@ -137,3 +141,77 @@ body.theme-dark .theme-toggle svg .moon { fill: #eceff1; filter: drop-shadow(0 0
   text-align: center;
 }
 .footer a { color: var(--text); text-decoration: underline; }
+
+.navbar-actions { margin-left: auto; display: flex; align-items: center; gap: 10px; }
+
+/* Dropdown */
+.dropdown { position: relative; }
+.dropdown-toggle { display: inline-flex; align-items: center; gap: 6px; }
+.dropdown-menu {
+  position: absolute;
+  right: 0;
+  top: calc(100% + 8px);
+  min-width: 220px;
+  border: 1px solid var(--line);
+  border-radius: 8px;
+  background: var(--surface);
+  box-shadow: 0 12px 24px rgba(0,0,0,0.12);
+  padding: 8px;
+  display: none;       /* başlangıçta gizli */
+  z-index: 1000;
+}
+.dropdown.open .dropdown-menu { display: block; }  /* toggle ile görünür */
+
+.dropdown-item {
+  display: block;
+  width: 100%;
+  text-align: left;
+  padding: 10px 12px;
+  border-radius: 6px;
+  color: var(--text);
+  text-decoration: none;
+  background: transparent;
+  border: 0;
+  cursor: pointer;
+}
+.dropdown-item:hover { background: rgba(0, 0, 0, 0.06); }
+
+/* Marka (rune) hover: metin <-> runik geçişi */
+.rune {
+  position: relative;
+  display: inline-block;
+  min-width: 10ch;
+  font-weight: 600;
+  color: var(--text);
+  text-decoration: none;
+}
+.rune::before { content: attr(data-text); transition: opacity .15s ease; }
+.rune::after {
+  content: attr(data-rune);
+  position: absolute;
+  left: 0;
+  top: 0;
+  opacity: 0;
+  transition: opacity .15s ease;
+}
+.rune:hover::before, .rune:focus-visible::before { opacity: 0; }
+.rune:hover::after, .rune:focus-visible::after { opacity: 1; }
+/* Eski runik hover yapısını kapat */
+.rune::before, .rune::after { content: none !important; }
+
+.rune {
+  display: inline-flex;
+  align-items: center;
+  gap: 6px;
+  color: var(--text);
+  text-decoration: none;
+  min-width: 12ch;
+}
+.rune .text { transition: opacity .15s ease; }
+.rune .runes { display: none; line-height: 0; }
+.rune svg { display: block; width: 160px; height: 32px; }
+
+.rune:hover .text,
+.rune:focus-visible .text { display: none; }
+.rune:hover .runes,
+.rune:focus-visible .runes { display: inline-block; }

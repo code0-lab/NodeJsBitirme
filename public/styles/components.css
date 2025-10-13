@@ -38,3 +38,15 @@ input[type="text"], input[type="email"], input[type="password"] {
 }
 .hint { display: block; margin-top: 6px; color: var(--muted); font-size: 13px; }
 .form-actions { margin-top: 12px; display: flex; gap: 12px; align-items: center; }
+
+/* Dark mode: dolu butonları açık palete çek, outline uyumlu kalsın */
+body.theme-dark .btn {
+  background: #eef3fb;    /* açık arka plan (beyaz tonlu) */
+  color: #0a0f14;         /* koyu yazı rengi */
+  border-color: #eef3fb;  /* kenarlık arka planla uyumlu */
+}
+body.theme-dark .btn.outline {
+  background: transparent;
+  color: var(--text);      /* base.css'teki açık yazı rengi */
+  border-color: var(--text);
+}
