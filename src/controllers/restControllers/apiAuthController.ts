@@ -1,6 +1,6 @@
 import { Request, Response } from 'express';
-import User from '../models/userModel';
-import { isValidEmail, isValidPassword } from '../utils/validators';
+import User from '../../models/userModel';
+import { isValidEmail, isValidPassword } from '../../utils/validators';
 
 export async function register(req: Request, res: Response) {
   const { email, password, name } = req.body as { email?: string; password?: string; name?: string };

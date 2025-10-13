@@ -1,0 +1,62 @@
+<!DOCTYPE html>
+<html lang="tr">
+<head>
+  <meta charset="UTF-8" />
+  <meta name="viewport" content="width=device-width, initial-scale=1" />
+  <title><%= title || 'Yggdrasil' %></title>
+  <link rel="stylesheet" href="/styles/main.css" />
+</head>
+<body>
+  <%- include('partials/navbar') %>
+
+  <header class="nyt-hero">
+    <div class="container">
+      <h1>Haberi Takip Etmenin En Güçlü Yolu</h1>
+      <p>Yggdrasil — zengin analizler, derinlemesine içerikler ve güvenilir haber deneyimi.</p>
+
+      <div class="nyt-grid">
+        <article class="plan-card">
+          <h3>Dijital Erişim</h3>
+          <p class="price">İlk ay indirimli</p>
+          <ul>
+            <li>Sınırsız makale ve analiz</li>
+            <li>Mobil ve web deneyimi</li>
+            <li>Kaydedip daha sonra oku</li>
+          </ul>
+          <a class="btn" href="/auth/register">Abone Ol</a>
+        </article>
+
+        <article class="plan-card">
+          <h3>All Access</h3>
+          <p class="price">Daha fazla özelliği keşfet</p>
+          <ul>
+            <li>Tüm dijital içerikler</li>
+            <li>Özel bültenler ve seriler</li>
+            <li>Erken erişim deneyimleri</li>
+          </ul>
+          <a class="btn outline" href="/api-docs" target="_blank" rel="noopener">API Dokümanı</a>
+        </article>
+      </div>
+    </div>
+  </header>
+
+  <main class="container">
+    <section class="features">
+      <div class="feature">
+        <h2>MVC Yapısı</h2>
+        <p>Controller, routes, views ve models ile düzenli ve ölçeklenebilir mimari.</p>
+      </div>
+      <div class="feature">
+        <h2>REST + Swagger</h2>
+        <p>JSON tabanlı uçlar; Swagger UI ile test ve dokümantasyon.</p>
+      </div>
+      <div class="feature">
+        <h2>MongoDB + Validasyon</h2>
+        <p>Mongoose modelleri, bcrypt ile şifreleme ve ortak validasyon yardımcıları.</p>
+      </div>
+    </section>
+  </main>
+
+  <%- include('partials/footer') %>
+</body>
+</html>

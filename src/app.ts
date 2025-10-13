@@ -36,4 +36,9 @@ app.use('/auth', authRouter);
 app.use('/api', apiRouter);
 app.use('/api-docs', swaggerUi.serve, swaggerUi.setup(swaggerSpec));
 
+// 404 handler: özel sayfayı render et
+app.use((req, res) => {
+  res.status(404).render('errors/404', { title: '404 - Kayıp Haber' });
+});
+
 export default app;

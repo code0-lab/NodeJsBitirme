@@ -2,35 +2,47 @@
 <html lang="tr">
 <head>
   <meta charset="UTF-8" />
-  <title><%= title %></title>
-  <link rel="stylesheet" href="/styles.css" />
+  <meta name="viewport" content="width=device-width, initial-scale=1" />
+  <title><%= title || 'Kayıt Ol' %></title>
+  <link rel="stylesheet" href="/styles/main.css" />
 </head>
 <body>
-  <h1>Kayıt Ol</h1>
-
-  <% if (typeof success !== 'undefined' && success) { %>
-    <p style="color: green;"><%= success %></p>
-  <% } %>
-
-  <% if (errors && errors.length) { %>
-    <ul style="color: red;">
-      <% errors.forEach(function(err){ %>
-        <li><%= err %></li>
-      <% }); %>
-    </ul>
-  <% } %>
-
-  <form method="POST" action="/auth/register">
-    <label for="name">Ad Soyad</label><br />
-    <input id="name" name="name" type="text" value="<%= values?.name || '' %>" /><br /><br />
-
-    <label for="email">E-posta</label><br />
-    <input id="email" name="email" type="email" value="<%= values?.email || '' %>" required /><br /><br />
-
-    <label for="password">Şifre</label><br />
-    <input id="password" name="password" type="password" required /><br /><br />
-
-    <button type="submit">Kayıt Ol</button>
-  </form>
+  <%- include('../partials/navbar') %>
+  <main class="container">
+    <section class="auth-card">
+      <h1 class="auth-title">Kayıt Ol</h1>
+      <p class="auth-subtitle">Yggdrasil’e katıl, içerikleri kaydet ve daha fazlasını keşfet.</p>
+      <% if (typeof success !== 'undefined' && success) { %>
+        <div class="alert alert-success"><%= success %></div>
+      <% } %>
+      <% if (errors && errors.length) { %>
+        <div class="alert alert-error">
+          <ul>
+            <% errors.forEach(function(err){ %><li><%= err %></li><% }); %>
+          </ul>
+        </div>
+      <% } %>
+      <form method="POST" action="/auth/register" class="auth-form">
+        <div class="form-group">
+          <label for="name">Ad Soyad</label>
+          <input id="name" name="name" type="text" value="<%= (values && values.name) || '' %>" />
+        </div>
+        <div class="form-group">
+          <label for="email">E-posta</label>
+          <input id="email" name="email" type="email" value="<%= (values && values.email) || '' %>" required />
+        </div>
+        <div class="form-group">
+          <label for="password">Şifre</label>
+          <input id="password" name="password" type="password" required />
+          <small class="hint">En az 8 karakter olmalı.</small>
+        </div>
+        <div class="form-actions">
+          <button type="submit" class="btn">Kayıt Ol</button>
+          <a class="btn outline" href="/auth/login">Giriş Yap</a>
+        </div>
+      </form>
+    </section>
+  </main>
+  <%- include('../partials/footer') %>
 </body>
 </html>

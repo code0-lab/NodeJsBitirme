@@ -1,0 +1,40 @@
+/* Buttons */
+.btn {
+  display: inline-block;
+  padding: 10px 16px;
+  border-radius: 999px;
+  border: 1px solid var(--text);
+  color: #fff;
+  background: var(--text);
+  text-decoration: none;
+}
+.btn.outline { background: transparent; color: var(--text); }
+.btn:hover { opacity: 0.9; }
+
+/* Cards ve formlar: yüzey üzerinde */
+.card, .plan-card, .auth-card {
+  border: 1px solid var(--line);
+  border-radius: 8px;
+  background: var(--surface);
+}
+
+/* Alerts */
+.alert {
+  padding: 12px;
+  border-radius: 6px;
+  margin-bottom: 16px;
+  border: 1px solid;
+}
+.alert-error { background: #fff5f5; border-color: #ffd1d1; color: #a40000; }
+.alert-success { background: #f2fff5; border-color: #c8e6c9; color: #256029; }
+
+/* Forms */
+.form-group { margin-bottom: 16px; }
+label { display: block; font-weight: 600; margin-bottom: 6px; }
+input[type="text"], input[type="email"], input[type="password"] {
+  width: 100%; padding: 10px 12px; border: 1px solid var(--line);
+  border-radius: 6px; font-family: inherit; font-size: 16px;
+  color: var(--text); background: transparent;
+}
+.hint { display: block; margin-top: 6px; color: var(--muted); font-size: 13px; }
+.form-actions { margin-top: 12px; display: flex; gap: 12px; align-items: center; }
