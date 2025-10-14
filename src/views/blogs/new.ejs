@@ -44,50 +44,45 @@
 
         <button type="submit" class="btn">Oluştur</button>
       </form>
+
+      <script>
+        const form = document.getElementById('blogForm');
+        const alertBox = document.getElementById('alert');
+      
+        form.addEventListener('submit', async (e) => {
+          e.preventDefault();
+      
+          const token = localStorage.getItem('token'); // varsa header’a ekleyeceğiz
+          const title = document.getElementById('title').value.trim();
+          const coverImageUrl = document.getElementById('coverImageUrl').value.trim();
+          const content = document.getElementById('content').value.trim();
+          const tagsInput = document.getElementById('tags').value.trim();
+          const isPublished = document.getElementById('isPublished').checked;
+          const tags = tagsInput ? tagsInput.split(',').map(t => t.trim()).filter(Boolean) : [];
+      
+          try {
+            const headers = { 'Content-Type': 'application/json' };
+            if (token) headers['Authorization'] = 'Bearer ' + token;
+      
+            const res = await fetch('/api/blogs', {
+              method: 'POST',
+              headers,
+              body: JSON.stringify({ title, coverImageUrl, content, tags, isPublished })
+            });
+      
+            const data = await res.json();
+            if (!res.ok) throw new Error(data?.error || 'İstek başarısız');
+      
+            window.location.href = '/blogs/' + data.item._id;
+          } catch (err) {
+            alertBox.textContent = err.message;
+            alertBox.style.display = 'block';
+          }
+        });
+      </script>
     </section>
   </main>
 
   <%- include('../partials/footer') %>
-
-  <script>
-    const form = document.getElementById('blogForm');
-    const alertBox = document.getElementById('alert');
-
-    form.addEventListener('submit', async (e) => {
-      e.preventDefault();
-      const token = localStorage.getItem('token'); // Swagger login sonrası token’ı burada saklayın
-      if (!token) {
-        alertBox.textContent = 'Token bulunamadı. Lütfen giriş yapın.';
-        alertBox.style.display = 'block';
-        return;
-      }
-
-      const title = document.getElementById('title').value.trim();
-      const coverImageUrl = document.getElementById('coverImageUrl').value.trim();
-      const content = document.getElementById('content').value.trim();
-      const tagsInput = document.getElementById('tags').value.trim();
-      const isPublished = document.getElementById('isPublished').checked;
-      const tags = tagsInput ? tagsInput.split(',').map(t => t.trim()).filter(Boolean) : [];
-
-      try {
-        const res = await fetch('/api/blogs', {
-          method: 'POST',
-          headers: {
-            'Content-Type': 'application/json',
-            'Authorization': 'Bearer ' + token
-          },
-          body: JSON.stringify({ title, coverImageUrl, content, tags, isPublished })
-        });
-        const data = await res.json();
-        if (!res.ok) {
-          throw new Error(data?.error || 'İstek başarısız');
-        }
-        window.location.href = '/blogs/' + data.item._id;
-      } catch (err) {
-        alertBox.textContent = err.message;
-        alertBox.style.display = 'block';
-      }
-    });
-  </script>
 </body>
 </html>

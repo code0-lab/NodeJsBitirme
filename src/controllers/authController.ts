@@ -29,22 +29,6 @@ export function signToken(user: IUser): string {
   return jwt.sign(payload, getJwtSecret(), { expiresIn: '1h' });
 }
 
-export function authenticateJWT(req: Request, res: Response, next: NextFunction) {
-  const auth = req.headers.authorization;
-  if (!auth || !auth.startsWith('Bearer ')) {
-    return res.status(401).json({ error: 'Yetkisiz: Bearer token gerekli' });
-  }
-  const token = auth.substring('Bearer '.length);
-
-  try {
-    const decoded = jwt.verify(token, getJwtSecret()) as DecodedToken;
-    (req as any).user = decoded;
-    next();
-  } catch {
-    return res.status(401).json({ error: 'Geçersiz veya süresi dolmuş token' });
-  }
-}
-
 export function authorizeRoles(...roles: UserRole[]) {
   return (req: Request, res: Response, next: NextFunction) => {
     const user = (req as any).user as DecodedToken | undefined;
@@ -94,14 +78,27 @@ export async function register(req: Request, res: Response) {
 function getTokenFromRequest(req: Request): string | undefined {
   const auth = req.headers.authorization;
   if (auth && auth.startsWith('Bearer ')) return auth.slice(7);
-  const cookie = req.headers.cookie;
-  if (cookie) {
-    const match = cookie.match(/(?:^|;\s*)token=([^;]+)/);
-    if (match) return decodeURIComponent(match[1]);
+
+  const cookieHeader = req.headers.cookie;
+  if (cookieHeader) {
+    const m = cookieHeader.match(/(?:^|;\s*)token=([^;]+)/);
+    if (m) return decodeURIComponent(m[1]);
   }
-  const q = req.query?.token;
-  if (typeof q === 'string') return q;
   return undefined;
+}
+
+export function authenticateJWT(req: Request, res: Response, next: NextFunction) {
+  const token = getTokenFromRequest(req);
+  if (!token) {
+    return res.status(401).json({ error: 'Yetkisiz: token gerekli' });
+  }
+  try {
+    const decoded = jwt.verify(token, getJwtSecret()) as DecodedToken;
+    (req as any).user = decoded;
+    next();
+  } catch {
+    return res.status(401).json({ error: 'Geçersiz veya süresi dolmuş token' });
+  }
 }
 
 // EJS sayfaları için koruma: yoksa login’e yönlendir
