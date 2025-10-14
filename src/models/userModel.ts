@@ -35,9 +35,6 @@ const userSchema = new Schema<IUser>(
   { timestamps: true }
 );
 
-// Bu satırı kaldırıyoruz: duplicate index uyarısı veriyor
-// userSchema.index({ email: 1 }, { unique: true });
-
 userSchema.pre('save', async function (next) {
   const user = this as IUser;
   if (!user.isModified('password')) return next();
