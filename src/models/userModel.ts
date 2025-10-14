@@ -2,7 +2,7 @@ import mongoose, { Schema, Document, Model } from 'mongoose';
 import bcrypt from 'bcryptjs';
 import { isValidEmail, isValidPassword } from '../utils/validators';
 
-export type UserRole = 'user' | 'admin';
+export type UserRole = 'user' |'author'| 'admin';
 
 export interface IUser extends Document {
   email: string;
@@ -30,7 +30,7 @@ const userSchema = new Schema<IUser>(
       validate: { validator: isValidPassword, message: 'Şifre en az 8 karakter olmalı' }
     },
     name: { type: String, trim: true },
-    role: { type: String, enum: ['user', 'admin'], default: 'user', required: true }
+    role: { type: String, enum: ['user', 'admin','author'], default: 'user', required: true }
   },
   { timestamps: true }
 );

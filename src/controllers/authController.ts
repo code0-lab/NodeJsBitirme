@@ -89,3 +89,45 @@ export async function register(req: Request, res: Response) {
     return res.status(500).render('auth/register', { title: 'Kayıt Ol', errors: ['Beklenmeyen bir hata oluştu.'], values });
   }
 }
+
+// Web isteklerinden token çek (Authorization, Cookie veya query)
+function getTokenFromRequest(req: Request): string | undefined {
+  const auth = req.headers.authorization;
+  if (auth && auth.startsWith('Bearer ')) return auth.slice(7);
+  const cookie = req.headers.cookie;
+  if (cookie) {
+    const match = cookie.match(/(?:^|;\s*)token=([^;]+)/);
+    if (match) return decodeURIComponent(match[1]);
+  }
+  const q = req.query?.token;
+  if (typeof q === 'string') return q;
+  return undefined;
+}
+
+// EJS sayfaları için koruma: yoksa login’e yönlendir
+export function authenticateWeb(req: Request, res: Response, next: NextFunction) {
+  const token = getTokenFromRequest(req);
+  if (!token) return res.redirect('/auth/login');
+  try {
+    const decoded = jwt.verify(token, getJwtSecret()) as DecodedToken;
+    (req as any).user = decoded;
+    next();
+  } catch {
+    return res.redirect('/auth/login');
+  }
+}
+
+// Kullanıcıyı EJS locals’a ekle (menü koşulları için)
+export function attachUserToLocals(req: Request, res: Response, next: NextFunction) {
+  const token = getTokenFromRequest(req);
+  if (token) {
+    try {
+      const decoded = jwt.verify(token, getJwtSecret()) as DecodedToken;
+      (req as any).user = decoded;
+      (res.locals as any).user = decoded;
+    } catch {
+      // geçersiz token ise sessizce devam
+    }
+  }
+  next();
+}
