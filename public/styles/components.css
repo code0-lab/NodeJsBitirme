@@ -50,3 +50,82 @@ body.theme-dark .btn.outline {
   color: var(--text);      /* base.css'teki açık yazı rengi */
   border-color: var(--text);
 }
+
+/* Search panel ve sonuç kutusu: konumu akışa al, animasyon layout.css’de */
+.search-panel {
+  position: fixed;
+  top: 0;                 /* layout.css ile uyumlu */
+  left: 50%;
+  transform: translate(-50%, -100%);
+  width: 90%;
+  max-width: 640px;
+  background: transparent;
+  z-index: 1001;
+}
+
+/* input bar: panel içinde tam genişlik görünümü */
+/* Arama input: kenarlık ve arka plan panelden gelir, input sade kalır */
+.search-panel #searchInput {
+  display: block;
+  width: 100%;
+  box-sizing: border-box;
+  padding: 8px 12px;
+  font-size: 16px;
+  border: 0;
+  background: transparent;
+  color: var(--text);
+}
+.theme-dark .search-panel #searchInput {
+  border: 0;
+  background: transparent;
+  color: #e5e7eb;
+}
+
+/* Sonuç kutusu artık mutlak değil; panel akışında animasyon layout.css’de */
+.search-panel .search-input-wrap .search-results,
+.search-panel .search-results {
+  position: static;
+  width: 100%;
+  box-sizing: border-box;
+  border: 1px solid #d1d5db;
+  border-radius: 8px;
+  background-color: #ffffff;
+  overflow-y: auto;
+}
+.theme-dark .search-panel .search-input-wrap .search-results,
+.theme-dark .search-panel .search-results {
+  border-color: #374151;
+  background-color: #111827;
+}
+
+.search-panel .search-results .result {
+  display: block;
+  text-decoration: none;
+  padding: 10px 12px;
+  border-top: 1px solid #e5e7eb;
+  color: #111827;
+}
+
+.search-panel .search-results .result:first-child {
+  border-top: none;
+}
+
+.theme-dark .search-panel .search-results .result {
+  border-top-color: #374151;
+  color: #e5e7eb;
+}
+
+.search-panel .search-results .result:hover {
+  background-color: #f3f4f6;
+}
+
+.theme-dark .search-panel .search-results .result:hover {
+  background-color: #1f2937;
+}
+
+.search-overlay {
+  position: fixed;
+  inset: 0;
+  background: rgba(0,0,0,0.35);
+  z-index: 1000;
+}

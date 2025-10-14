@@ -46,8 +46,12 @@
 
   <div class="navbar-actions">
     <div class="dropdown" id="navbarDropdown">
-      <button class="btn outline dropdown-toggle" type="button" aria-expanded="false">
-        Menü <span aria-hidden="true">▼</span>
+      <button class="dropdown-toggle" type="button" aria-expanded="false" aria-label="Menü">
+        <span class="hamburger" aria-hidden="true">
+          <span class="line"></span>
+          <span class="line"></span>
+          <span class="line"></span>
+        </span>
       </button>
       <div class="dropdown-menu" role="menu" aria-label="Gezinme menüsü">
         <a class="dropdown-item" href="/">Ana Sayfa</a>
@@ -89,12 +93,18 @@
 <!-- Arama paneli ve overlay -->
 <div id="searchOverlay" class="search-overlay" hidden></div>
 <div id="searchPanel" class="search-panel" role="dialog" aria-label="Site içi arama" aria-modal="true" hidden>
-  <svg width="18" height="18" viewBox="0 0 24 24" fill="none" aria-hidden="true">
-    <circle cx="11" cy="11" r="7" stroke="currentColor" stroke-width="2"></circle>
-    <line x1="16.5" y1="16.5" x2="21" y2="21" stroke="currentColor" stroke-width="2" stroke-linecap="round"></line>
-  </svg>
-  <input id="searchInput" type="text" placeholder="Ara: başlık, yazar, etiket..." />
-  <button id="searchClose" type="button" class="btn outline">Kapat</button>
+  <!-- Arama satırı: ikon + input + kapat -->
+  <div class="search-input-row">
+    <svg width="18" height="18" viewBox="0 0 24 24" fill="none" aria-hidden="true">
+      <circle cx="11" cy="11" r="7" stroke="currentColor" stroke-width="2"></circle>
+      <line x1="16.5" y1="16.5" x2="21" y2="21" stroke="currentColor" stroke-width="2" stroke-linecap="round"></line>
+    </svg>
+    <input id="searchInput" type="text" autocomplete="off" placeholder="Ara: başlık, yazar, etiket..." />
+  </div>
+
+  <div id="searchResults" class="search-results" aria-live="polite"></div>
+    <div class="muted">Arama sonuçları</div>
+  </div>
 </div>
 
 <script>
@@ -121,6 +131,7 @@
     const overlay = document.getElementById('searchOverlay');
     const input = document.getElementById('searchInput');
     const closeBtn = document.getElementById('searchClose');
+    const resultsBox = document.getElementById('searchResults');
 
     function openPanel() {
       panel.hidden = false;
@@ -135,7 +146,8 @@
       panel.classList.remove('open');
       overlay.classList.remove('open');
       document.body.style.overflow = '';
-      input.value = '';
+      if (input) input.value = '';
+      if (resultsBox) resultsBox.innerHTML = '';
       setTimeout(() => { panel.hidden = true; overlay.hidden = true; }, 200);
     }
 
@@ -143,6 +155,52 @@
     overlay?.addEventListener('click', closePanel);
     closeBtn?.addEventListener('click', closePanel);
     document.addEventListener('keydown', (e) => { if (e.key === 'Escape') closePanel(); });
+
+    // Basit HTML escape (XSS önlemi)
+    function escapeHtml(str) {
+      return String(str).replace(/[&<>"'`=\/]/g, s => ({
+        '&':'&amp;','<':'&lt;','>':'&gt;','"':'&quot;', "'":'&#39;', '`':'&#96;', '=':'&#61;','/':'&#47;'
+      }[s] || s));
+    }
+
+    function renderResults(items) {
+      if (!resultsBox) return;
+      if (!items || items.length === 0) {
+        resultsBox.innerHTML = '<div class="muted">Sonuç bulunamadı</div>';
+        return;
+      }
+      resultsBox.innerHTML = items.map(item => `
+        <a class="result" href="/blogs/${item._id}">
+          <div class="title">${escapeHtml(item.title || '')}</div>
+          <div class="meta">Yazar: ${escapeHtml((item.author && item.author.name) || 'Bilinmiyor')}</div>
+        </a>
+      `).join('');
+    }
+
+    async function fetchResults(q) {
+      try {
+        const resp = await fetch('/api/search/blogs?q=' + encodeURIComponent(q), { headers: { 'accept': 'application/json' } });
+        if (!resp.ok) throw new Error('HTTP ' + resp.status);
+        const data = await resp.json();
+        renderResults(data.items || []);
+      } catch (err) {
+        if (resultsBox) resultsBox.innerHTML = '<div class="error">Hata: ' + escapeHtml(err.message || String(err)) + '</div>';
+      }
+    }
+
+    function debounce(fn, wait) {
+      let t;
+      return (...args) => { clearTimeout(t); t = setTimeout(() => fn(...args), wait); };
+    }
+    const debouncedFetch = debounce(fetchResults, 250);
+
+    input?.addEventListener('input', (e) => {
+      const q = e.target.value.trim();
+      if (!resultsBox) return;
+      if (q.length < 2) { resultsBox.innerHTML = ''; return; }
+      resultsBox.innerHTML = '<div class="muted">Yükleniyor...</div>';
+      debouncedFetch(q);
+    });
 
     // Tema toggle
     const themeBtn = document.getElementById('themeToggle');
