@@ -9,12 +9,14 @@ function isOwnerOrAdmin(user: DecodedToken | undefined, author: any) {
   return isOwner || isAdmin;
 }
 
-export async function listBlogs(req: Request, res: Response) {
+export async function listBlogs(_req: Request, res: Response) {
   try {
     const blogs = await Blog.find()
       .sort({ createdAt: -1 })
-      .populate('author', 'name email')
-      .populate('categories', 'name');
+      .populate('createdAt', 'title')
+      .populate('content', 'tags')
+      .lean();
+
     return res.json({ items: blogs });
   } catch {
     return res.status(500).json({ error: 'Bloglar listelenemedi' });
@@ -25,7 +27,9 @@ export async function getBlog(req: Request, res: Response) {
   try {
     const blog = await Blog.findById(req.params.id)
       .populate('author', 'name email')
-      .populate('categories', 'name');
+      .populate('categories', 'name')
+      .lean();
+
     if (!blog) return res.status(404).json({ error: 'Blog bulunamadı' });
     return res.json({ item: blog });
   } catch {

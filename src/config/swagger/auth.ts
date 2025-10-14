@@ -57,6 +57,10 @@ export const authPaths = {
                 email: { type: 'string', format: 'email' },
                 password: { type: 'string' }
               }
+            },
+            example: {
+              email: 'admin@ludusmagnus.com',
+              password: '12345678'
             }
           }
         }

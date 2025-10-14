@@ -30,7 +30,7 @@ export async function createBlog(req: Request, res: Response) {
   }
 }
 
-export async function listBlogsPage(req: Request, res: Response) {
+export async function listBlogsPage(_req: Request, res: Response) {
   const blogs = await Blog.find().sort({ createdAt: -1 }).populate('author', 'name').lean();
   res.render('blogs/index', { title: 'Blog', blogs });
 }
