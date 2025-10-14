@@ -42,8 +42,11 @@ app.use('/blogs', blogRouter);
 app.use('/api', apiRouter);
 app.use('/api-docs', swaggerUi.serve, swaggerUi.setup(swaggerSpec));
 
-// 404 handler: özel sayfayı render et
+// 404 handler: API için JSON, web için EJS
 app.use((req, res) => {
+  if (req.path.startsWith('/api')) {
+    return res.status(404).json({ error: 'Endpoint bulunamadı' });
+  }
   res.status(404).render('errors/404', { title: '404 - Kayıp Haber' });
 });
 

@@ -33,22 +33,42 @@ export async function getBlog(req: Request, res: Response) {
   }
 }
 
+// createBlog (REST)
 export async function createBlog(req: Request, res: Response) {
   try {
     const user = (req as any).user as DecodedToken | undefined;
     if (!user) return res.status(401).json({ error: 'Yetkisiz: giriş yapın' });
 
     const { title, content, tags, categories, coverImageUrl, isPublished } = req.body;
-    const doc = await Blog.create({
-      title,
-      content,
-      tags,
-      categories,
-      coverImageUrl,
-      isPublished: !!isPublished,
-      author: user.sub
-    });
-    return res.status(201).json({ ok: true, item: doc });
+
+    if (!title?.trim() || !content?.trim()) {
+      return res.status(400).json({ error: 'Başlık ve içerik zorunlu' });
+    }
+
+    const normalizedTags = Array.isArray(tags)
+      ? tags.map((t) => String(t).trim()).filter(Boolean)
+      : typeof tags === 'string' && tags.length
+      ? tags.split(',').map((t) => t.trim()).filter(Boolean)
+      : [];
+
+    const normalizedCategories = Array.isArray(categories)
+      ? categories.map((c) => String(c).trim()).filter(Boolean)
+      : [];
+
+    try {
+      const doc = await Blog.create({
+        title: title.trim(),
+        content,
+        tags: normalizedTags,
+        categories: normalizedCategories,
+        coverImageUrl,
+        isPublished: !!isPublished,
+        author: user.sub
+      });
+      return res.status(201).json({ ok: true, item: doc });
+    } catch (err) {
+      return res.status(400).json({ error: (err as Error).message });
+    }
   } catch (err) {
     return res.status(400).json({ error: (err as Error).message });
   }
