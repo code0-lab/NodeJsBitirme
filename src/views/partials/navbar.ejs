@@ -51,8 +51,10 @@
       </button>
       <div class="dropdown-menu" role="menu" aria-label="Gezinme menüsü">
         <a class="dropdown-item" href="/">Ana Sayfa</a>
-        <a class="dropdown-item" href="/blogs">Bloglar</a>
-        <a class="dropdown-item" href="/auth/register">Kayıt Ol</a>
+                <% if (typeof user !== 'undefined' && user) { %>
+          <a class="dropdown-item" href="/blogs">Bloglar</a>
+        <% } %>
+        <a class="dropdown-item" href="/auth/login">Giriş yap</a>
         <a class="dropdown-item" href="/api-docs">API Docs</a>
       </div>
     </div>

@@ -10,13 +10,20 @@ export async function login(req: Request, res: Response) {
   const values = { email };
 
   try {
-    await loginUser({ email, password });
+    const { user, token } = await loginUser({ email, password });
+
+    // JWT'yi cookie'ye yaz (web koruması için)
+    res.cookie('token', token, {
+      httpOnly: true,
+      sameSite: 'lax',
+      maxAge: 60 * 60 * 1000
+    });
 
     return res.render('auth/login', {
       title: 'Giriş Yap',
       errors: [],
       values: {},
-      success: 'Giriş başarılı! Token üretildi.'
+      success: 'Giriş başarılı! Bloglara erişebilirsiniz.'
     });
   } catch (err) {
     const status = err instanceof AppError ? err.status : 500;

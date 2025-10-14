@@ -12,6 +12,7 @@ import swaggerUi from 'swagger-ui-express';
 import { swaggerSpec } from './config/swagger';
 import apiRouter from './routes/api';
 import blogRouter from './routes/blog';
+import { attachUserToLocals } from './controllers/authController';
 
 const app = express();
 
@@ -31,6 +32,9 @@ app.use(express.static(path.join(__dirname, '../public')));
 // Body parsing
 app.use(express.json());
 app.use(express.urlencoded({ extended: true }));
+
+// Kullanıcı bilgisini EJS'e geçir
+app.use(attachUserToLocals);
 
 app.use('/', indexRouter);
 app.use('/auth', authRouter);
