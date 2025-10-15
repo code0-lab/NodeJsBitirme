@@ -7,6 +7,7 @@ dotenv.config();
 
 import indexRouter from './routes/index';
 import authRouter from './routes/auth';
+import categoriesRouter from './routes/categories';
 // @ts-ignore
 import swaggerUi from 'swagger-ui-express';
 import { swaggerSpec } from './config/swagger';
@@ -40,6 +41,7 @@ app.use(attachUserToLocals);
 
 app.use('/', indexRouter);
 app.use('/auth', authRouter);
+app.use('/categories', categoriesRouter);
 app.use('/blogs', blogRouter);
 app.use('/news', newsRouter);
 app.use('/api', apiRouter);

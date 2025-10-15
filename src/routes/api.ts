@@ -1,9 +1,10 @@
 import { Router } from 'express';
-import { authenticateJWT } from '../controllers/authController';
+import { authenticateJWT, authorizeRoles } from '../controllers/authController';
 import { listBlogs, getBlog, createBlog, updateBlog, deleteBlog } from '../controllers/restControllers/apiBlogController';
 import { register, login } from '../controllers/restControllers/apiAuthController';
 import { searchBlogs } from '../controllers/restControllers/apiSearchController';
 import { listNews, getNews, createNews, updateNews, deleteNews, likeNews, dislikeNews } from '../controllers/restControllers/apiNewsController';
+import { listCategories, getCategory, createCategory } from '../controllers/restControllers/apiCategoryController';
 
 const router = Router();
 
@@ -25,5 +26,10 @@ router.delete('/news/:id', authenticateJWT, deleteNews);
 // Beğeni/beğenmeme aksiyonları
 router.post('/news/:id/like', authenticateJWT, likeNews);
 router.post('/news/:id/dislike', authenticateJWT, dislikeNews);
+
+// Kategoriler
+router.get('/categories', listCategories);
+router.get('/categories/:id', getCategory);
+router.post('/categories', authenticateJWT, authorizeRoles('admin'), createCategory);
 
 export default router;

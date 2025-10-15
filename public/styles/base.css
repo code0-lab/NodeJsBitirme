@@ -23,6 +23,8 @@ body {
 body {
   display: flex;
   flex-direction: column;
+  /* Sabit footer için içerik üzerine binmeyi önle */
+  padding-bottom: 72px; /* footer yüksekliğine göre ayarla */
 }
 /* İçerik alanı kalan yüksekliği doldursun */
 main {

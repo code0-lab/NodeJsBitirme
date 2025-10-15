@@ -129,3 +129,40 @@ body.theme-dark .btn.outline {
   background: rgba(0,0,0,0.35);
   z-index: 1000;
 }
+
+/* Page header (global): liste sayfalarında başlık + sağda buton */
+.page-header {
+  display: flex;
+  align-items: center;
+  justify-content: space-between;
+  margin: 16px 0;
+}
+/* Yardımcı: sönük metin */
+.muted { color: var(--muted); }
+/* Kart başlığı: blog/news ile uyumlu */
+.card-title { font-size: 20px; margin: 0 0 8px; }
+/* Tablo: yüzeye uygun hafif çizgiler ve boşluk */
+.table {
+  width: 100%;
+  border-collapse: collapse;
+}
+.table th, .table td {
+  padding: 8px 10px;
+  border-bottom: 1px solid var(--line);
+  text-align: left;
+}
+.table thead th {
+  font-weight: 700;
+  background: var(--surface);
+}
+
+/* Kartı tamamen tıklanabilir yapan anchor stili */
+.card-link {
+  display: block;
+  color: var(--text);
+  text-decoration: none;
+  cursor: pointer;
+}
+.card-link:hover { text-decoration: none; }
+/* Hover halinde hafif vurgulama isterseniz (opsiyonel) */
+/* .card-link:hover { box-shadow: 0 2px 8px rgba(0,0,0,0.08); } */

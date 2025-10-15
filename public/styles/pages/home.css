@@ -31,3 +31,44 @@ body.theme-dark .nyt-hero .btn { background: transparent; color: var(--text); }
   .nyt-grid { grid-template-columns: 1fr; }
   .nyt-hero h1 { font-size: 32px; }
 }
+
+/* Ana sayfa iki sütun düzeni: sol %25, sağ %75 */
+.home-grid {
+  display: grid;
+  grid-template-columns: 1fr 3fr; /* 25% / 75% */
+  gap: 24px;
+  align-items: start;
+}
+.home-column { display: flex; flex-direction: column; gap: 12px; }
+.home-column .card-title { font-size: 18px; margin: 0 0 6px; }
+/* Responsive: mobilde tek sütun */
+@media (max-width: 900px) {
+  .home-grid { grid-template-columns: 1fr; }
+}
+/* Kart kapak görselleri */
+.media-card { padding: 0; transition: transform .18s ease, box-shadow .18s ease; }
+.media-card:hover { transform: translateY(-2px); box-shadow: 0 12px 24px rgba(0,0,0,0.12); }
+.media-cover {
+  width: 100%;
+  height: 180px;
+  object-fit: cover;
+  border-bottom: 1px solid var(--line);
+  border-top-left-radius: 8px;
+  border-top-right-radius: 8px;
+  display: block;
+}
+/* İçerik alanı boşlukları */
+.card-body { padding: 12px; }
+/* Önizleme: hover’da açılan içerik */
+.preview {
+  margin: 8px 0 0;
+  color: var(--muted);
+  max-height: 0;
+  overflow: hidden;
+  opacity: 0;
+  transition: max-height .25s ease, opacity .25s ease;
+}
+.media-card:hover .preview {
+  max-height: 160px; /* gösterilecek metin yüksekliği */
+  opacity: 1;
+}

@@ -65,6 +65,9 @@
           <a class="dropdown-item" href="/">Ana Sayfa</a>
           <a class="dropdown-item" href="/blogs">Bloglar</a>
           <a class="dropdown-item" href="/api-docs">API Docs</a>
+          <% if (user && user.role === 'admin') { %>
+            <a class="dropdown-item" href="/categories">Kategoriler</a>
+          <% } %>
         </div>
       </div>
 
