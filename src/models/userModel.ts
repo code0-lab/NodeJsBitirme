@@ -8,39 +8,37 @@ export interface IUser extends Document {
   email: string;
   password: string;
   name?: string;
+  profilePicture?: string;
   role: UserRole;
   createdAt: Date;
   updatedAt: Date;
   comparePassword(candidate: string): Promise<boolean>;
 }
 
-const userSchema = new Schema<IUser>(
-  {
-    email: {
-      type: String,
-      required: true,
-      unique: true, // unique zaten indeks oluşturur
-      lowercase: true,
-      trim: true,
-      validate: { validator: isValidEmail, message: 'Geçerli bir e-posta girin' }
-    },
-    password: {
-      type: String,
-      required: true,
-      validate: { validator: isValidPassword, message: 'Şifre en az 8 karakter olmalı' }
-    },
-    name: { type: String, trim: true },
-    role: { type: String, enum: ['user', 'admin','author'], default: 'user', required: true }
+const userSchema = new mongoose.Schema<IUser>({
+  email: {
+    type: String,
+    required: true,
+    unique: true, // unique zaten indeks oluşturur
+    lowercase: true,
+    trim: true,
+    validate: { validator: isValidEmail, message: 'Geçerli bir e-posta girin' }
   },
-  { timestamps: true }
-);
+  password: {
+    type: String,
+    required: true,
+    validate: { validator: isValidPassword, message: 'Şifre en az 8 karakter olmalı' }
+  },
+  name: { type: String, trim: true },
+  profilePicture: { type: String, default: '/images/default-avatar.svg' },
+  role: { type: String, enum: ['user', 'admin','author'], default: 'user', required: true }
+}, { timestamps: true });
 
-userSchema.pre('save', async function (next) {
-  const user = this as IUser;
-  if (!user.isModified('password')) return next();
+userSchema.pre<IUser>('save', async function (next) {
+  if (!this.isModified('password')) return next();
   try {
     const salt = await bcrypt.genSalt(10);
-    user.password = await bcrypt.hash(user.password, salt);
+    this.password = await bcrypt.hash(this.password, salt);
     next();
   } catch (err) {
     next(err as Error);
