@@ -18,13 +18,9 @@ export async function login(req: Request, res: Response) {
       sameSite: 'lax',
       maxAge: 60 * 60 * 1000
     });
-
-    return res.render('auth/login', {
-      title: 'Giriş Yap',
-      errors: [],
-      values: {},
-      success: 'Giriş başarılı! Bloglara erişebilirsiniz.'
-    });
+    
+    return res.redirect('/news'); // route’a yönlendir (render edilmez)
+    
   } catch (err) {
     const status = err instanceof AppError ? err.status : 500;
     const msg = err instanceof AppError ? err.message : 'Beklenmeyen bir hata oluştu.';

@@ -1,0 +1,46 @@
+<!DOCTYPE html>
+<html lang="tr">
+<head>
+  <meta charset="UTF-8" />
+  <meta name="viewport" content="width=device-width,initial-scale=1" />
+  <title><%= title %></title>
+  <link rel="stylesheet" href="/styles/base.css" />
+  <link rel="stylesheet" href="/styles/components.css" />
+  <link rel="stylesheet" href="/styles/layout.css" />
+</head>
+<body>
+  <%- include('../partials/navbar') %>
+
+  <main class="container">
+    <div class="page-header">
+      <h1 class="auth-title">Haberler</h1>
+      <a class="btn" href="/news/new">Yeni Haber</a>
+    </div>
+
+    <% if (!news || !news.length) { %>
+      <p class="muted">Henüz haber yok.</p>
+    <% } else { %>
+      <!-- Blog grid stilini yeniden kullanıyoruz -->
+      <div class="blog-grid">
+        <% news.forEach(function(n){ %>
+          <article class="card blog-card">
+            <% if (n.imageUrl) { %>
+              <img class="blog-cover" src="<%= n.imageUrl %>" alt="<%= n.title %> görsel" />
+            <% } %>
+            <div class="card-body">
+              <h2 class="card-title"><a href="/news/<%= n._id %>"><%= n.title %></a></h2>
+              <p class="muted">
+                Kategori: <%= n.category?.name || 'Belirtilmemiş' %> ·
+                Yazar: <%= n.author?.name || 'Anonim' %>
+              </p>
+              <a class="btn" href="/news/<%= n._id %>">Görüntüle</a>
+            </div>
+          </article>
+        <% }) %>
+      </div>
+    <% } %>
+  </main>
+
+  <%- include('../partials/footer') %>
+</body>
+</html>

@@ -1,0 +1,99 @@
+<!DOCTYPE html>
+<html lang="tr">
+<head>
+  <meta charset="UTF-8" />
+  <meta name="viewport" content="width=device-width,initial-scale=1" />
+  <title><%= title %></title>
+  <link rel="stylesheet" href="/styles/base.css" />
+  <link rel="stylesheet" href="/styles/components.css" />
+  <link rel="stylesheet" href="/styles/layout.css" />
+</head>
+<body>
+  <%- include('../partials/navbar') %>
+
+  <main class="container">
+    <section class="auth-card">
+      <h1 class="auth-title">Yeni Haber</h1>
+      <div id="alert" class="alert" style="display:none;"></div>
+
+      <form id="newsForm" class="form">
+        <div class="form-group">
+          <label for="title">Başlık</label>
+          <input type="text" id="title" name="title" class="input" required />
+        </div>
+
+        <div class="form-group">
+          <label for="imageUrl">Görsel URL (opsiyonel)</label>
+          <input type="url" id="imageUrl" name="imageUrl" class="input" placeholder="https://..." />
+        </div>
+
+        <div class="form-group">
+          <label for="content">İçerik</label>
+          <textarea id="content" name="content" class="input" rows="8" required></textarea>
+        </div>
+
+        <div class="form-group">
+          <label for="category">Kategori ID</label>
+          <input type="text" id="category" name="category" class="input" placeholder="Kategori ObjectId" required />
+        </div>
+
+        <div class="form-group">
+          <label><input type="checkbox" id="isActive" /> Yayınla</label>
+        </div>
+
+        <!-- like/dislike alanları kaldırıldı -->
+        <div class="form-group">
+          <label for="like">Beğeni (opsiyonel)</label>
+          <input type="number" id="like" name="like" class="input" min="0" />
+        </div>
+
+        <div class="form-group">
+          <label for="dislike">Beğenmeme (opsiyonel)</label>
+          <input type="number" id="dislike" name="dislike" class="input" min="0" />
+        </div>
+
+        <button type="submit" class="btn">Oluştur</button>
+      </form>
+
+      <script>
+        const form = document.getElementById('newsForm');
+        const alertBox = document.getElementById('alert');
+
+        form.addEventListener('submit', async (e) => {
+          e.preventDefault();
+
+          const token = localStorage.getItem('token'); // API'ye JWT eklemek için varsa kullanılır
+          const title = document.getElementById('title').value.trim();
+          const imageUrl = document.getElementById('imageUrl').value.trim();
+          const content = document.getElementById('content').value.trim();
+          const category = document.getElementById('category').value.trim();
+          const isActive = document.getElementById('isActive').checked;
+          // like/dislike gönderimi kaldırıldı
+          const res = await fetch('/api/news', {
+            method: 'POST',
+            headers,
+            body: JSON.stringify({
+              title,
+              imageUrl: imageUrl || undefined,
+              content,
+              category,
+              isActive
+            })
+          });
+
+            const data = await res.json();
+            if (!res.ok) throw new Error(data?.error || 'İstek başarısız');
+
+            window.location.href = '/news/' + data.item._id;
+        } catch (err) {
+            alertBox.textContent = err.message;
+            alertBox.style.display = 'block';
+          }
+        });
+      </script>
+    </section>
+  </main>
+
+  <%- include('../partials/footer') %>
+</body>
+</html>

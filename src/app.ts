@@ -13,6 +13,8 @@ import { swaggerSpec } from './config/swagger';
 import apiRouter from './routes/api';
 import blogRouter from './routes/blog';
 import { attachUserToLocals } from './controllers/authController';
+import newsRouter from './routes/news';
+import './models/categoriesModel'; // Category modelini kaydet (populate için gerekli)
 
 const app = express();
 
@@ -39,6 +41,7 @@ app.use(attachUserToLocals);
 app.use('/', indexRouter);
 app.use('/auth', authRouter);
 app.use('/blogs', blogRouter);
+app.use('/news', newsRouter);
 app.use('/api', apiRouter);
 app.use('/api-docs', swaggerUi.serve, swaggerUi.setup(swaggerSpec));
 

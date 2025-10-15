@@ -1,0 +1,129 @@
+<!DOCTYPE html>
+<html lang="tr">
+<head>
+  <meta charset="UTF-8" />
+  <meta name="viewport" content="width=device-width,initial-scale=1" />
+  <title><%= title %></title>
+  <link rel="stylesheet" href="/styles/base.css" />
+  <link rel="stylesheet" href="/styles/components.css" />
+  <link rel="stylesheet" href="/styles/layout.css" />
+</head>
+<body>
+  <%- include('../partials/navbar') %>
+
+  <main class="container">
+    <article class="auth-card">
+      <header class="auth-title"><%= news.title %></header>
+      <% if (news.imageUrl) { %>
+        <img class="blog-cover" src="<%= news.imageUrl %>" alt="<%= news.title %> görsel" />
+      <% } %>
+      <div class="blog-content"><%= news.content %></div>
+      <p class="muted">
+        Kategori: <%= news.category?.name || 'Belirtilmemiş' %> ·
+        Yazar: <%= news.author?.name || 'Anonim' %>
+      </p>
+
+      <% 
+        const userId = (typeof user !== 'undefined' && user && user.sub) ? String(user.sub) : null;
+        const likedByUser = !!(userId && Array.isArray(news.likesID) && news.likesID.some(id => String(id) === userId));
+        const dislikedByUser = !!(userId && Array.isArray(news.dislikesID) && news.dislikesID.some(id => String(id) === userId));
+        const likesCount = Array.isArray(news.likesID) ? news.likesID.length : 0;
+        const dislikesCount = Array.isArray(news.dislikesID) ? news.dislikesID.length : 0;
+      %>
+
+      <div class="reaction-bar" style="display:flex; gap:12px; align-items:center; margin-top:12px;">
+        <button 
+          id="likeBtn" 
+          class="btn <%= likedByUser ? 'active' : '' %>" 
+          aria-pressed="<%= likedByUser ? 'true' : 'false' %>"
+          title="Beğen">
+          👍
+        </button>
+        <span id="likeCount" class="muted"><%= likesCount %></span>
+
+        <button 
+          id="dislikeBtn" 
+          class="btn <%= dislikedByUser ? 'active' : '' %>" 
+          aria-pressed="<%= dislikedByUser ? 'true' : 'false' %>"
+          title="Beğenme">
+          👎
+        </button>
+        <span id="dislikeCount" class="muted"><%= dislikesCount %></span>
+      </div>
+
+      <div id="alert" class="alert" style="display:none; margin-top:8px;"></div>
+
+      <script>
+        const likeBtn = document.getElementById('likeBtn');
+        const dislikeBtn = document.getElementById('dislikeBtn');
+        const likeCountEl = document.getElementById('likeCount');
+        const dislikeCountEl = document.getElementById('dislikeCount');
+        const alertBox = document.getElementById('alert');
+        const newsId = '<%= news._id %>';
+
+        let busy = false;
+        function setBusy(state) {
+          busy = state;
+          likeBtn.toggleAttribute('disabled', state);
+          dislikeBtn.toggleAttribute('disabled', state);
+        }
+
+        function applyUI(action, likesCount, dislikesCount) {
+          likeCountEl.textContent = likesCount;
+          dislikeCountEl.textContent = dislikesCount;
+
+          if (action === 'liked' || action === 'switched_to_like') {
+            likeBtn.classList.add('active');
+            likeBtn.setAttribute('aria-pressed', 'true');
+            dislikeBtn.classList.remove('active');
+            dislikeBtn.setAttribute('aria-pressed', 'false');
+          } else if (action === 'disliked' || action === 'switched_to_dislike') {
+            dislikeBtn.classList.add('active');
+            dislikeBtn.setAttribute('aria-pressed', 'true');
+            likeBtn.classList.remove('active');
+            likeBtn.setAttribute('aria-pressed', 'false');
+          } else if (action === 'unliked') {
+            likeBtn.classList.remove('active');
+            likeBtn.setAttribute('aria-pressed', 'false');
+          } else if (action === 'undisliked') {
+            dislikeBtn.classList.remove('active');
+            dislikeBtn.setAttribute('aria-pressed', 'false');
+          }
+        }
+
+        async function postReaction(path) {
+          if (busy) return;
+          alertBox.style.display = 'none';
+          setBusy(true);
+          try {
+            const res = await fetch(path, {
+              method: 'POST',
+              headers: { 'Content-Type': 'application/json' },
+              credentials: 'same-origin'
+            });
+            const data = await res.json();
+            if (res.status === 401) {
+              window.location.href = '/auth/login';
+              return;
+            }
+            if (!res.ok) {
+              throw new Error(data?.error || 'İstek başarısız');
+            }
+            applyUI(data.action, data.likesCount ?? Number(likeCountEl.textContent), data.dislikesCount ?? Number(dislikeCountEl.textContent));
+          } catch (err) {
+            alertBox.textContent = err.message;
+            alertBox.style.display = 'block';
+          } finally {
+            setBusy(false);
+          }
+        }
+
+        likeBtn?.addEventListener('click', () => postReaction(`/api/news/${newsId}/like`));
+        dislikeBtn?.addEventListener('click', () => postReaction(`/api/news/${newsId}/dislike`));
+      </script>
+    </article>
+  </main>
+
+  <%- include('../partials/footer') %>
+</body>
+</html>
