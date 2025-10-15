@@ -1,13 +1,15 @@
 import { baseSpec } from './swagger/base';
 import { authPaths } from './swagger/auth';
 import { blogPaths, blogSchemas } from './swagger/blogs';
+import { newsPaths, newsSchemas } from './swagger/news';
 
 export const swaggerSpec = {
   ...baseSpec,
   // paths ekleme sırası UI’daki görünümü etkiler
   paths: {
     ...authPaths,
-    ...blogPaths
+    ...blogPaths,
+    ...newsPaths
   },
   components: {
     ...baseSpec.components,
@@ -16,7 +18,8 @@ export const swaggerSpec = {
     },
     schemas: {
       ...(baseSpec.components.schemas || {}),
-      ...blogSchemas
+      ...blogSchemas,
+      ...newsSchemas
     }
   }
 };
