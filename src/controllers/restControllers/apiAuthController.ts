@@ -8,7 +8,7 @@ export async function register(req: Request, res: Response) {
       id: created._id,
       email: created.email,
       name: created.name,
-      role: created.role
+      roles: created.roles
     });
   } catch (err) {
     const status = err instanceof AppError ? err.status : 500;
@@ -22,7 +22,7 @@ export async function login(req: Request, res: Response) {
     const { user, token } = await loginUser(req.body as { email?: string; password?: string });
     return res.status(200).json({
       token,
-      user: { id: user._id, email: user.email, name: user.name, role: user.role }
+      user: { id: user._id, email: user.email, name: user.name, roles: user.roles }
     });
   } catch (err) {
     const status = err instanceof AppError ? err.status : 500;

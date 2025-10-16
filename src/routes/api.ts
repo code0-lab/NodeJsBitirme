@@ -19,9 +19,9 @@ router.post('/auth/register', register);
 router.post('/auth/login', login);
 router.get('/news', listNews);
 router.get('/news/:id', getNews);
-router.post('/news', authenticateJWT, createNews);
-router.put('/news/:id', authenticateJWT, updateNews);
-router.delete('/news/:id', authenticateJWT, deleteNews);
+router.post('/news', authenticateJWT, authorizeRoles('admin', 'author'), createNews);
+router.put('/news/:id', authenticateJWT, authorizeRoles('admin', 'author'), updateNews);
+router.delete('/news/:id', authenticateJWT, authorizeRoles('admin', 'author'), deleteNews);
 
 // Beğeni/beğenmeme aksiyonları
 router.post('/news/:id/like', authenticateJWT, likeNews);

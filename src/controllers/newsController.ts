@@ -22,7 +22,11 @@ export async function showNewsPage(req: Request, res: Response) {
   res.render('news/show', { title: item.title, news: item });
 }
 
-export async function newNewsForm(_req: Request, res: Response) {
+export async function newNewsForm(req: Request, res: Response) {
+  const user = (req as any).user as DecodedToken | undefined;
+  const userRoles = Array.isArray(user?.roles) ? user!.roles : user?.roles ? [user.roles] : [];
+  const allowed = userRoles.includes('admin') || userRoles.includes('author');
+  if (!allowed) return res.status(403).render('errors/403', { title: '403 - Yetkisiz' });
   res.render('news/new', { title: 'Yeni Haber' });
 }
 

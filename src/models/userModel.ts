@@ -9,7 +9,7 @@ export interface IUser extends Document {
   password: string;
   name?: string;
   profilePicture?: string;
-  role: UserRole;
+  roles: UserRole[];
   createdAt: Date;
   updatedAt: Date;
   comparePassword(candidate: string): Promise<boolean>;
@@ -31,7 +31,7 @@ const userSchema = new mongoose.Schema<IUser>({
   },
   name: { type: String, trim: true },
   profilePicture: { type: String, default: '/images/default-avatar.svg' },
-  role: { type: String, enum: ['user', 'admin','author'], default: 'user', required: true }
+  roles: { type: [String], enum: ['user', 'admin','author'], default: ['user'], required: true }
 }, { timestamps: true });
 
 userSchema.pre<IUser>('save', async function (next) {

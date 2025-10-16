@@ -5,7 +5,7 @@ import { DecodedToken } from '../authController';
 function isOwnerOrAdmin(user: DecodedToken | undefined, author: any) {
   if (!user) return false;
   const isOwner = String(author) === String(user.sub);
-  const isAdmin = user.role === 'admin';
+  const isAdmin = Array.isArray(user.roles) ? user.roles.includes('admin') : user.roles === 'admin';
   return isOwner || isAdmin;
 }
 

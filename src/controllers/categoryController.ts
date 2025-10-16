@@ -9,16 +9,18 @@ export async function listCategoriesPage(_req: Request, res: Response) {
 
 export async function newCategoryForm(req: Request, res: Response) {
   const user = (req as any).user as DecodedToken | undefined;
-  if (!user || user.role !== 'admin') {
-    return res.status(403).render('errors/404', { title: '403 - Yetkisiz' });
+  const userRoles = Array.isArray(user?.roles) ? user!.roles : user?.roles ? [user.roles] : [];
+  if (!user || !userRoles.includes('admin')) {
+    return res.status(403).render('errors/403', { title: '403 - Yetkisiz' });
   }
   res.render('categories/new', { title: 'Yeni Kategori', errors: [], values: {} });
 }
 
 export async function createCategoryWeb(req: Request, res: Response) {
   const user = (req as any).user as DecodedToken | undefined;
-  if (!user || user.role !== 'admin') {
-    return res.status(403).render('errors/404', { title: '403 - Yetkisiz' });
+  const userRoles = Array.isArray(user?.roles) ? user!.roles : user?.roles ? [user.roles] : [];
+  if (!user || !userRoles.includes('admin')) {
+    return res.status(403).render('errors/403', { title: '403 - Yetkisiz' });
   }
 
   const { name, description, kind, isActive } = req.body as {

@@ -6,7 +6,7 @@ import { isValidEmail, isValidPassword } from '../utils/validators';
 
 export interface DecodedToken {
   sub: string;
-  role: UserRole;
+  roles: UserRole[];
   email: string;
   iat?: number;
   exp?: number;
@@ -21,9 +21,15 @@ function getJwtSecret(): string {
 }
 
 export function signToken(user: IUser): string {
+  const roles = Array.isArray((user as any).roles)
+    ? (user as any).roles
+    : (user as any).role
+    ? [(user as any).role]
+    : ['user'];
+
   const payload: Omit<DecodedToken, 'iat' | 'exp'> = {
     sub: String(user._id),
-    role: user.role,
+    roles,
     email: user.email
   };
   return jwt.sign(payload, getJwtSecret(), { expiresIn: '1h' });
@@ -35,7 +41,9 @@ export function authorizeRoles(...roles: UserRole[]) {
     if (!user) {
       return res.status(401).json({ error: 'Yetkisiz: Kimlik doğrulama gerekli' });
     }
-    if (!roles.includes(user.role)) {
+    const userRoles = Array.isArray(user.roles) ? user.roles : user.roles ? [user.roles] : [];
+    const allowed = roles.some((r) => userRoles.includes(r));
+    if (!allowed) {
       return res.status(403).json({ error: 'Erişim reddedildi: rol yetkisi yok' });
     }
     next();
@@ -65,7 +73,7 @@ export async function register(req: Request, res: Response) {
       return res.status(409).render('auth/register', { title: 'Kayıt Ol', errors: ['Bu e-posta zaten kayıtlı.'], values });
     }
 
-    await User.create({ email, password, name, role: 'user' });
+    await User.create({ email, password, name, roles: ['user'] });
 
     // İstersen burada login sayfasına yönlendirebiliriz.
     return res.status(201).render('auth/register', { title: 'Kayıt Ol', errors: [], values: {}, success: 'Kayıt başarılı! Giriş yapabilirsiniz.' });

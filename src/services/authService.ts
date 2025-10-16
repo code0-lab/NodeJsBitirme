@@ -19,7 +19,7 @@ export async function registerUser(input: { email?: string; password?: string; n
   const exists = await User.findOne({ email });
   if (exists) throw new AppError(409, 'Bu e-posta zaten kayıtlı.');
 
-  const created = await User.create({ email, password, name, role: 'user' });
+  const created = await User.create({ email, password, name, roles: ['user'] });
   return created;
 }
 
