@@ -123,3 +123,22 @@
 .card-body {
   padding: 12px;
 }
+
+/* Haber detay sayfası: URL'den gelen büyük görsellerin taşmasını önle */
+.auth-card .blog-cover {
+  display: block;
+  max-width: 100%;
+  width: 100%;
+  height: auto;
+  max-height: min(70vh, 720px);
+  object-fit: contain;
+  margin: 12px 0;
+  border: 1px solid var(--line);
+  border-radius: 8px;
+  box-sizing: border-box;
+}
+
+/* Koyu tema: kenarlık görünürlüğünü koru */
+body.theme-dark .auth-card .blog-cover {
+  border-color: rgba(255, 255, 255, 0.18);
+}
