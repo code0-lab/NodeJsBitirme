@@ -20,7 +20,7 @@ const NewsSchema: Schema<INews> = new Schema(
     updatedAt: { type: Date, default: Date.now },
     content: { type: String, required: true, minlength: 150, maxlength: 4000, trim: true },
     imageUrl: { type: String, trim: true },
-    category: { type: Schema.Types.ObjectId, ref: "Category", required: true },
+    category: { type: Schema.Types.ObjectId, ref: "Category" },
     author: { type: Schema.Types.ObjectId, ref: "User", required: true },
     isActive: { type: Boolean, default: false },
     // like/dislike numeric alanları kaldırıldı, ID dizileri eklendi

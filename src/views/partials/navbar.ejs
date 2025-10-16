@@ -64,12 +64,11 @@
         <div class="dropdown-menu" role="menu" aria-label="Gezinme menüsü">
           <a class="dropdown-item" href="/">Ana Sayfa</a>
           <a class="dropdown-item" href="/blogs">Bloglar</a>
-          <!-- Yeni: Haberler -->
           <a class="dropdown-item" href="/news">Haberler</a>
           <a class="dropdown-item" href="/api-docs">API Docs</a>
-          <% if (user && (Array.isArray(user.roles) ? user.roles.includes('admin') : user.role === 'admin')) { %>
-            <a class="dropdown-item" href="/categories">Kategoriler</a>
-          <% } %>
+          <a class="dropdown-item" href="/categories">Kategoriler</a>
+          <!-- Yeni: Çıkış yap -->
+          <a class="dropdown-item" href="/auth/logout">Çıkış yap</a>
         </div>
       </div>
 

@@ -7,6 +7,7 @@
   <link rel="stylesheet" href="/styles/base.css" />
   <link rel="stylesheet" href="/styles/components.css" />
   <link rel="stylesheet" href="/styles/layout.css" />
+  <link rel="stylesheet" href="/styles/pages/news.css" />
 </head>
 <body>
   <%- include('../partials/navbar') %>
@@ -28,7 +29,6 @@
     <% if (!news || !news.length) { %>
       <p class="muted">Henüz haber yok.</p>
     <% } else { %>
-      <!-- Blog grid stilini yeniden kullanıyoruz -->
       <div class="blog-grid">
         <% news.forEach(function(n){ %>
           <article class="card blog-card">
@@ -46,6 +46,37 @@
           </article>
         <% }) %>
       </div>
+
+      <!-- Sayfalama -->
+      <% if (typeof totalPages !== 'undefined' && totalPages > 1) { %>
+        <nav class="pagination" aria-label="Sayfalama">
+          <ul class="pagination-list">
+            <li>
+              <% if (currentPage > 1) { %>
+                <a class="btn outline" href="/news?page=<%= currentPage - 1 %>">Önceki</a>
+              <% } else { %>
+                <span class="btn outline disabled">Önceki</span>
+              <% } %>
+            </li>
+            <li class="pages">
+              <% for (let p = 1; p <= totalPages; p++) { %>
+                <% if (p === currentPage) { %>
+                  <span class="page-number active"><%= p %></span>
+                <% } else { %>
+                  <a class="page-number" href="/news?page=<%= p %>"><%= p %></a>
+                <% } %>
+              <% } %>
+            </li>
+            <li>
+              <% if (currentPage < totalPages) { %>
+                <a class="btn outline" href="/news?page=<%= currentPage + 1 %>">Sonraki</a>
+              <% } else { %>
+                <span class="btn outline disabled">Sonraki</span>
+              <% } %>
+            </li>
+          </ul>
+        </nav>
+      <% } %>
     <% } %>
   </main>
 

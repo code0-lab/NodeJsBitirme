@@ -45,14 +45,14 @@ export async function createNews(req: Request, res: Response) {
 
     const { title, content, category, isActive, imageUrl } = req.body; // like/dislike kaldırıldı
 
-    if (!title?.trim() || !content?.trim() || !category) {
-      return res.status(400).json({ error: 'Başlık, içerik ve kategori zorunlu' });
+    if (!title?.trim() || !content?.trim()) {
+      return res.status(400).json({ error: 'Başlık ve içerik zorunlu' });
     }
 
     const doc = await News.create({
       title: title.trim(),
       content,
-      category,
+      category: category || undefined, // kategori artık opsiyonel
       author: user.sub,
       isActive: !!isActive,
       imageUrl: imageUrl?.trim() || undefined

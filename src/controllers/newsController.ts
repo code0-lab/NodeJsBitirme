@@ -2,14 +2,27 @@ import { Request, Response } from 'express';
 import News from '../models/newsModel';
 import { DecodedToken } from './authController';
 
-export async function listNewsPage(_req: Request, res: Response) {
-  const items = await News.find()
-    .sort({ createdAt: -1 })
-    .populate('author', 'name')
-    .populate('category', 'name')
-    .lean();
+export async function listNewsPage(req: Request, res: Response) {
+    const limit = 9;
+    const totalCount = await News.countDocuments({});
+    const totalPages = Math.max(1, Math.ceil(totalCount / limit));
+    const currentPage = Math.min(Math.max(Number(req.query.page) || 1, 1), totalPages);
+    const skip = (currentPage - 1) * limit;
 
-  res.render('news/index', { title: 'Haberler', news: items });
+    const items = await News.find()
+      .sort({ createdAt: -1 })
+      .skip(skip)
+      .limit(limit)
+      .populate('author', 'name')
+      .populate('category', 'name')
+      .lean();
+
+    res.render('news/index', {
+      title: 'Haberler',
+      news: items,
+      currentPage,
+      totalPages
+    });
 }
 
 export async function showNewsPage(req: Request, res: Response) {
@@ -37,14 +50,14 @@ export async function createNews(req: Request, res: Response) {
     if (!user) return res.status(401).json({ error: 'Yetkisiz: giriş yapın' });
 
     const { title, content, category, isActive, imageUrl } = req.body; // like/dislike kaldırıldı
-    if (!title?.trim() || !content?.trim() || !category) {
-      return res.status(400).json({ error: 'Başlık, içerik ve kategori zorunlu' });
+    if (!title?.trim() || !content?.trim()) {
+      return res.status(400).json({ error: 'Başlık ve içerik zorunlu' });
     }
 
     const doc = await News.create({
       title: title.trim(),
       content,
-      category,
+      category: category || undefined, // kategori artık opsiyonel
       author: user.sub,
       isActive: !!isActive,
       imageUrl: imageUrl?.trim() || undefined
