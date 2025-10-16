@@ -1,8 +1,9 @@
 export const newsPaths = {
-  '/api/news': {
+  // v1 endpoints
+  '/api/v1/news': {
     get: {
       tags: ['News'],
-      summary: 'Haberleri listele',
+      summary: 'Haberleri listele (v1)',
       responses: {
         '200': {
           description: 'Haber listesi',
@@ -25,7 +26,7 @@ export const newsPaths = {
     },
     post: {
       tags: ['News'],
-      summary: 'Yeni haber oluştur',
+      summary: 'Yeni haber oluştur (v1)',
       security: [{ bearerAuth: [] }],
       requestBody: {
         required: true,
@@ -55,10 +56,10 @@ export const newsPaths = {
       }
     }
   },
-  '/api/news/{id}': {
+  '/api/v1/news/{id}': {
     get: {
       tags: ['News'],
-      summary: 'Haber detayını getir',
+      summary: 'Haber detayını getir (v1)',
       parameters: [
         { name: 'id', in: 'path', required: true, schema: { type: 'string' } }
       ],
@@ -80,7 +81,7 @@ export const newsPaths = {
     },
     put: {
       tags: ['News'],
-      summary: 'Haberi güncelle',
+      summary: 'Haberi güncelle (v1)',
       security: [{ bearerAuth: [] }],
       parameters: [
         { name: 'id', in: 'path', required: true, schema: { type: 'string' } }
@@ -115,14 +116,14 @@ export const newsPaths = {
     },
     delete: {
       tags: ['News'],
-      summary: 'Haberi sil',
+      summary: 'Haberi sil (v1)',
       security: [{ bearerAuth: [] }],
       parameters: [
         { name: 'id', in: 'path', required: true, schema: { type: 'string' } }
       ],
       responses: {
         '200': {
-          description: 'Haber silindi',
+          description: 'Haberi silindi',
           content: {
             'application/json': {
               schema: {
@@ -138,10 +139,10 @@ export const newsPaths = {
       }
     }
   },
-  '/api/news/{id}/like': {
+  '/api/v1/news/{id}/like': {
     post: {
       tags: ['News'],
-      summary: 'Haberi beğen veya beğeniyi geri al',
+      summary: 'Haberi beğen veya beğeniyi geri al (v1)',
       description: 'Aynı butona tekrar basılırsa beğeni geri alınır; opposite basılırsa dislike -> like dönüşür.',
       security: [{ bearerAuth: [] }],
       parameters: [
@@ -162,10 +163,10 @@ export const newsPaths = {
       }
     }
   },
-  '/api/news/{id}/dislike': {
+  '/api/v1/news/{id}/dislike': {
     post: {
       tags: ['News'],
-      summary: 'Haberi beğenmeme veya geri alma',
+      summary: 'Haberi beğenmeme veya geri alma (v1)',
       description: 'Aynı butona tekrar basılırsa beğenmeme geri alınır; opposite basılırsa like -> dislike dönüşür.',
       security: [{ bearerAuth: [] }],
       parameters: [
@@ -185,7 +186,8 @@ export const newsPaths = {
         '400': { description: 'Geçersiz istek' }
       }
     }
-  }
+  },
+  
 };
 
 export const newsSchemas = {

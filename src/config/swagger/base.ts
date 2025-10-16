@@ -10,7 +10,8 @@ export const baseSpec = {
   tags: [
     { name: 'Auth', description: 'Kayıt ve giriş' },
     { name: 'Blogs', description: 'Blog CRUD' },
-    { name: 'News', description: 'Haber CRUD ve reaksiyonlar' }
+    { name: 'News', description: 'Haber CRUD ve reaksiyonlar' },
+    { name: 'Categories', description: 'Kategori listeleme ve oluşturma' }
   ],
   paths: {},
   components: {

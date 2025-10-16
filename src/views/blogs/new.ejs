@@ -12,7 +12,7 @@
 <body>
   <%- include('../partials/navbar') %>
 
-  <main class="container">
+  <main class="container container-wide blog-container">
     <section class="auth-card">
       <h1 class="auth-title">Yeni Blog Yazısı</h1>
       <div id="alert" class="alert" style="display:none;"></div>
@@ -24,8 +24,8 @@
         </div>
 
         <div class="form-group">
-          <label for="coverImageUrl">Kapak Görseli URL</label>
-          <input type="url" id="coverImageUrl" name="coverImageUrl" class="input" />
+          <label for="coverImageUrl">Kapak Görseli URL (opsiyonel)</label>
+          <input type="url" id="coverImageUrl" name="coverImageUrl" class="input" placeholder="https://..." />
         </div>
 
         <div class="form-group">
@@ -64,7 +64,7 @@
             const headers = { 'Content-Type': 'application/json' };
             if (token) headers['Authorization'] = 'Bearer ' + token;
       
-            const res = await fetch('/api/blogs', {
+            const res = await fetch('/api/v1/blogs', {
               method: 'POST',
               headers,
               body: JSON.stringify({ title, coverImageUrl, content, tags, isPublished })

@@ -1,8 +1,9 @@
 export const blogPaths = {
-  '/api/blogs': {
+  // v1 endpoints
+  '/api/v1/blogs': {
     get: {
       tags: ['Blogs'],
-      summary: 'Blogları listele',
+      summary: 'Blogları listele (v1)',
       responses: {
         '200': {
           description: 'Blog listesi',
@@ -25,7 +26,7 @@ export const blogPaths = {
     },
     post: {
       tags: ['Blogs'],
-      summary: 'Yeni blog oluştur',
+      summary: 'Yeni blog oluştur (v1)',
       security: [{ bearerAuth: [] }],
       requestBody: {
         required: true,
@@ -55,10 +56,10 @@ export const blogPaths = {
       }
     }
   },
-  '/api/blogs/{id}': {
+  '/api/v1/blogs/{id}': {
     get: {
       tags: ['Blogs'],
-      summary: 'Blog detayını getir',
+      summary: 'Blog detayını getir (v1)',
       parameters: [
         { name: 'id', in: 'path', required: true, schema: { type: 'string' } }
       ],
@@ -80,7 +81,7 @@ export const blogPaths = {
     },
     put: {
       tags: ['Blogs'],
-      summary: 'Blogu güncelle',
+      summary: 'Blogu güncelle (v1)',
       security: [{ bearerAuth: [] }],
       parameters: [
         { name: 'id', in: 'path', required: true, schema: { type: 'string' } }
@@ -115,7 +116,7 @@ export const blogPaths = {
     },
     delete: {
       tags: ['Blogs'],
-      summary: 'Blogu sil',
+      summary: 'Blogu sil (v1)',
       security: [{ bearerAuth: [] }],
       parameters: [
         { name: 'id', in: 'path', required: true, schema: { type: 'string' } }
@@ -137,7 +138,8 @@ export const blogPaths = {
         '400': { description: 'Geçersiz istek' }
       }
     }
-  }
+  },
+  
 };
 
 export const blogSchemas = {

@@ -13,7 +13,8 @@
   <main class="container">
     <div class="page-header">
       <h1 class="auth-title">Kategoriler</h1>
-      <% if (user && user.role === 'admin') { %>
+      <% const userRoles = (user && Array.isArray(user.roles)) ? user.roles : (user && user.roles ? [user.roles] : []);
+         if (userRoles.includes('admin')) { %>
         <a class="btn" href="/categories/new">Yeni Kategori</a>
       <% } %>
     </div>

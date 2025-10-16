@@ -1,8 +1,9 @@
 export const authPaths = {
-  '/api/auth/register': {
+  // v1 Auth endpoints
+  '/api/v1/auth/register': {
     post: {
       tags: ['Auth'],
-      summary: 'Kullanıcı kaydı',
+      summary: 'Kullanıcı kaydı (v1)',
       requestBody: {
         required: true,
         content: {
@@ -30,7 +31,7 @@ export const authPaths = {
                   id: { type: 'string' },
                   email: { type: 'string' },
                   name: { type: 'string' },
-                  role: { type: 'string', enum: ['user', 'admin'] }
+                  roles: { type: 'array', items: { type: 'string', enum: ['user', 'admin'] } }
                 }
               }
             }
@@ -42,10 +43,10 @@ export const authPaths = {
       }
     }
   },
-  '/api/auth/login': {
+  '/api/v1/auth/login': {
     post: {
       tags: ['Auth'],
-      summary: 'Kullanıcı girişi',
+      summary: 'Kullanıcı girişi (v1)',
       requestBody: {
         required: true,
         content: {
@@ -59,8 +60,8 @@ export const authPaths = {
               }
             },
             example: {
-              email: 'admin@ludusmagnus.com',
-              password: '12345678'
+              email: 'user@example.com',
+              password: 'Password123!'
             }
           }
         }
@@ -80,7 +81,7 @@ export const authPaths = {
                       id: { type: 'string' },
                       email: { type: 'string' },
                       name: { type: 'string' },
-                      role: { type: 'string', enum: ['user', 'admin'] }
+                      roles: { type: 'array', items: { type: 'string', enum: ['user', 'admin'] } }
                     }
                   }
                 }
@@ -93,5 +94,82 @@ export const authPaths = {
         '500': { description: 'Sunucu hatası' }
       }
     }
-  }
+  },
+  '/api/v1/auth/profile': {
+    get: {
+      tags: ['Auth'],
+      summary: 'Profil bilgisi (v1)',
+      security: [{ bearerAuth: [] }],
+      responses: {
+        '200': {
+          description: 'Kullanıcı profili',
+          content: {
+            'application/json': {
+              schema: {
+                type: 'object',
+                properties: {
+                  user: {
+                    type: 'object',
+                    properties: {
+                      id: { type: 'string' },
+                      email: { type: 'string' },
+                      name: { type: 'string' },
+                      roles: { type: 'array', items: { type: 'string', enum: ['user', 'admin'] } }
+                    }
+                  }
+                }
+              }
+            }
+          }
+        },
+        '401': { description: 'Yetkisiz: token gerekli' },
+        '404': { description: 'Kullanıcı bulunamadı' }
+      }
+    }
+  },
+  '/api/v1/auth/refresh': {
+    post: {
+      tags: ['Auth'],
+      summary: 'Token yenile (v1)',
+      security: [{ bearerAuth: [] }],
+      responses: {
+        '200': {
+          description: 'Yeni access token üretildi',
+          content: {
+            'application/json': {
+              schema: {
+                type: 'object',
+                properties: { token: { type: 'string' } }
+              }
+            }
+          }
+        },
+        '401': { description: 'Yetkisiz: token gerekli' },
+        '404': { description: 'Kullanıcı bulunamadı' }
+      }
+    }
+  },
+  '/api/v1/auth/logout': {
+    post: {
+      tags: ['Auth'],
+      summary: 'Çıkış yap (v1)',
+      description: 'Stateless JWT için istemci tokenı temizler; cookie kullanan istemci için token cookie’si sıfırlanır.',
+      security: [{ bearerAuth: [] }],
+      responses: {
+        '200': {
+          description: 'Çıkış başarılı',
+          content: {
+            'application/json': {
+              schema: {
+                type: 'object',
+                properties: { ok: { type: 'boolean' }, message: { type: 'string' } }
+              }
+            }
+          }
+        },
+        '401': { description: 'Yetkisiz: token gerekli' }
+      }
+    }
+  },
+  
 };

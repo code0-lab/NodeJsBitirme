@@ -2,6 +2,7 @@ import { baseSpec } from './swagger/base';
 import { authPaths } from './swagger/auth';
 import { blogPaths, blogSchemas } from './swagger/blogs';
 import { newsPaths, newsSchemas } from './swagger/news';
+import { categoryPaths, categorySchemas } from './swagger/categories';
 
 export const swaggerSpec = {
   ...baseSpec,
@@ -9,7 +10,8 @@ export const swaggerSpec = {
   paths: {
     ...authPaths,
     ...blogPaths,
-    ...newsPaths
+    ...newsPaths,
+    ...categoryPaths
   },
   components: {
     ...baseSpec.components,
@@ -19,7 +21,8 @@ export const swaggerSpec = {
     schemas: {
       ...(baseSpec.components.schemas || {}),
       ...blogSchemas,
-      ...newsSchemas
+      ...newsSchemas,
+      ...categorySchemas
     }
   }
 };
