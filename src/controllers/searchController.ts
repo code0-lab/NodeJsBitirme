@@ -1,12 +1,10 @@
+// searchController.ts: makeNewsSearchFilter ekleniyor
 import { Request } from 'express';
+import { makeSafeRegex } from '../utils/validators';
 
 export function getQueryFromReq(req: Request): string {
   const qRaw = (req.query.q ?? req.query.search ?? '') as string;
   return String(qRaw).trim();
-}
-
-export function makeSafeRegex(q: string): RegExp {
-  return new RegExp(q.replace(/[.*+?^${}()|[\]\\]/g, '\\$&'), 'i');
 }
 
 export function makeBlogSearchFilter(q: string) {
@@ -17,6 +15,18 @@ export function makeBlogSearchFilter(q: string) {
       { title: rx },
       { content: rx },
       { tags: { $in: [rx] } }
+    ]
+  };
+}
+
+// Yeni: News arama filtresi (aktif haberlerde title/content eşleşmesi)
+export function makeNewsSearchFilter(q: string) {
+  const rx = makeSafeRegex(q);
+  return {
+    isActive: true,
+    $or: [
+      { title: rx },
+      { content: rx }
     ]
   };
 }

@@ -126,6 +126,7 @@
   </div>
 </div>
 
+<!-- navbar.ejs: renderResults ve fetchResults hem blog hem news destekleyecek şekilde güncelleniyor -->
 <script>
   (function () {
     // Dropdown
@@ -189,7 +190,7 @@
         return;
       }
       resultsBox.innerHTML = items.map(item => `
-        <a class="result" href="/blogs/${item._id}">
+        <a class="result" href="/${item.type}/${item._id}">
           <div class="title">${escapeHtml(item.title || '')}</div>
           <div class="meta">Yazar: ${escapeHtml((item.author && item.author.name) || 'Bilinmiyor')}</div>
         </a>
@@ -198,10 +199,25 @@
 
     async function fetchResults(q) {
       try {
-        const resp = await fetch('/api/search/blogs?q=' + encodeURIComponent(q), { headers: { 'accept': 'application/json' } });
-        if (!resp.ok) throw new Error('HTTP ' + resp.status);
-        const data = await resp.json();
-        renderResults(data.items || []);
+        const headers = { 'accept': 'application/json' };
+        const [blogsResp, newsResp] = await Promise.all([
+          fetch('/api/v1/search/blogs?q=' + encodeURIComponent(q), { headers }),
+          fetch('/api/v1/search/news?q=' + encodeURIComponent(q), { headers })
+        ]);
+        if (!blogsResp.ok) throw new Error('HTTP ' + blogsResp.status);
+        if (!newsResp.ok) throw new Error('HTTP ' + newsResp.status);
+
+        const blogsData = await blogsResp.json();
+        const newsData = await newsResp.json();
+
+        const blogItems = (blogsData.items || []).map(it => ({ ...it, type: 'blogs' }));
+        const newsItems = (newsData.items || []).map(it => ({ ...it, type: 'news' }));
+
+        const items = [...blogItems, ...newsItems]
+          .sort((a, b) => new Date(b.createdAt).getTime() - new Date(a.createdAt).getTime())
+          .slice(0, 20);
+
+        renderResults(items);
       } catch (err) {
         if (resultsBox) resultsBox.innerHTML = '<div class="error">Hata: ' + escapeHtml(err.message || String(err)) + '</div>';
       }
