@@ -111,28 +111,28 @@ export function authenticateJWT(req: Request, res: Response, next: NextFunction)
 
 // EJS sayfaları için koruma: yoksa login’e yönlendir
 export function authenticateWeb(req: Request, res: Response, next: NextFunction) {
-  const token = getTokenFromRequest(req);
-  if (!token) return res.redirect('/auth/login');
-  try {
-    const decoded = jwt.verify(token, getJwtSecret()) as DecodedToken;
-    (req as any).user = decoded;
-    next();
-  } catch {
-    return res.redirect('/auth/login');
-  }
+  const sessionUser = (req as any).session?.user;
+  if (!sessionUser) return res.redirect('/auth/login');
+  (req as any).user = sessionUser;
+  return next();
 }
 
 // Kullanıcıyı EJS locals’a ekle (menü koşulları için)
 export function attachUserToLocals(req: Request, res: Response, next: NextFunction) {
+  const sessionUser = (req as any).session?.user;
+  if (sessionUser) {
+    (req as any).user = sessionUser;
+    (res.locals as any).user = sessionUser;
+    return next();
+  }
+  // JWT fallback (API akışıyla uyum için)
   const token = getTokenFromRequest(req);
   if (token) {
-    try {
-      const decoded = jwt.verify(token, getJwtSecret()) as DecodedToken;
-      (req as any).user = decoded;
-      (res.locals as any).user = decoded;
-    } catch {
-      // geçersiz token ise sessizce devam
-    }
+      try {
+          const decoded = jwt.verify(token, getJwtSecret()) as DecodedToken;
+          (req as any).user = decoded;
+          (res.locals as any).user = decoded;
+      } catch { /* geçersiz token: sessizce geç */ }
   }
   next();
 }

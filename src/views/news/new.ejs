@@ -17,7 +17,7 @@
       <h1 class="auth-title">Yeni Haber</h1>
       <div id="alert" class="alert" style="display:none;"></div>
 
-      <form id="newsForm" class="form">
+      <form id="newsForm" class="form" method="post" action="/news">
         <div class="form-group">
           <label for="title">Başlık</label>
           <input type="text" id="title" name="title" class="input" required />
@@ -34,15 +34,18 @@
         </div>
 
         <div class="form-group">
-          <label for="category">Kategori ID</label>
-          <input type="text" id="category" name="category" class="input" placeholder="Kategori ObjectId (opsiyonel)" />
+          <label for="category">Kategori (opsiyonel)</label>
+          <select id="category" name="category" class="input">
+            <option value="">Kategori seçilmesin</option>
+            <% (categories || []).forEach(function(cat){ %>
+              <option value="<%= cat._id %>"><%= cat.name %></option>
+            <% }) %>
+          </select>
         </div>
 
         <div class="form-group">
           <label><input type="checkbox" id="isActive" /> Yayınla</label>
         </div>
-
-        <!-- like/dislike alanları kaldırıldı -->
 
         <button type="submit" class="btn">Oluştur</button>
       </form>
@@ -54,26 +57,20 @@
         form.addEventListener('submit', async (e) => {
           e.preventDefault();
           try {
-            const token = localStorage.getItem('token');
-            const headers = {
-              'Content-Type': 'application/json',
-              ...(token ? { 'Authorization': `Bearer ${token}` } : {})
-            };
-
             const title = document.getElementById('title').value.trim();
             const imageUrl = document.getElementById('imageUrl').value.trim();
             const content = document.getElementById('content').value.trim();
-            const category = document.getElementById('category').value.trim();
+            const category = document.getElementById('category').value;
             const isActive = document.getElementById('isActive').checked;
 
-            const res = await fetch('/api/news', {
+            const res = await fetch('/news', {
               method: 'POST',
-              headers,
+              headers: { 'Content-Type': 'application/json' },
               body: JSON.stringify({
                 title,
                 imageUrl: imageUrl || undefined,
                 content,
-                category: category || undefined, // boş ise gönderme
+                category: category || undefined,
                 isActive
               })
             });

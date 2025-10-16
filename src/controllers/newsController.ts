@@ -1,6 +1,7 @@
 import { Request, Response } from 'express';
 import News from '../models/newsModel';
 import { DecodedToken } from './authController';
+import Category from '../models/categoriesModel';
 
 export async function listNewsPage(req: Request, res: Response) {
     const limit = 9;
@@ -40,7 +41,12 @@ export async function newNewsForm(req: Request, res: Response) {
   const userRoles = Array.isArray(user?.roles) ? user!.roles : user?.roles ? [user.roles] : [];
   const allowed = userRoles.includes('admin') || userRoles.includes('author');
   if (!allowed) return res.status(403).render('errors/403', { title: '403 - Yetkisiz' });
-  res.render('news/new', { title: 'Yeni Haber' });
+
+  const categories = await Category.find({ isActive: true, kind: { $in: ['news', 'both'] } })
+    .sort({ name: 1 })
+    .lean();
+
+  res.render('news/new', { title: 'Yeni Haber', categories });
 }
 
 // İsteğe bağlı: Web’den JSON ile haber oluşturma (form yerine AJAX kullanıyorsanız)

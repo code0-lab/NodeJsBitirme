@@ -187,7 +187,35 @@ export const newsPaths = {
       }
     }
   },
-  
+  '/api/v1/search/news': {
+    get: {
+      tags: ['News'],
+      summary: 'Haber araması (v1)',
+      parameters: [
+        { name: 'q', in: 'query', required: true, schema: { type: 'string' }, description: 'Arama terimi' },
+        { name: 'limit', in: 'query', required: false, schema: { type: 'integer', minimum: 1, maximum: 50 }, description: 'Maksimum sonuç sayısı (varsayılan 20, en fazla 50)' }
+      ],
+      responses: {
+        '200': {
+          description: 'Arama sonuçları',
+          content: {
+            'application/json': {
+              schema: {
+                type: 'object',
+                properties: {
+                  items: {
+                    type: 'array',
+                    items: { $ref: '#/components/schemas/News' }
+                  }
+                }
+              }
+            }
+          }
+        },
+        '500': { description: 'Arama sırasında hata oluştu' }
+      }
+    },
+  },
 };
 
 export const newsSchemas = {

@@ -139,7 +139,35 @@ export const blogPaths = {
       }
     }
   },
-  
+  '/api/v1/search/blogs': {
+    get: {
+      tags: ['Blogs'],
+      summary: 'Blog araması (v1)',
+      parameters: [
+        { name: 'q', in: 'query', required: true, schema: { type: 'string' }, description: 'Arama terimi' },
+        { name: 'limit', in: 'query', required: false, schema: { type: 'integer', minimum: 1, maximum: 50 }, description: 'Maksimum sonuç sayısı (varsayılan 20, en fazla 50)' }
+      ],
+      responses: {
+        '200': {
+          description: 'Arama sonuçları',
+          content: {
+            'application/json': {
+              schema: {
+                type: 'object',
+                properties: {
+                  items: {
+                    type: 'array',
+                    items: { $ref: '#/components/schemas/Blog' }
+                  }
+                }
+              }
+            }
+          }
+        },
+        '500': { description: 'Arama sırasında hata oluştu' }
+      }
+    }
+  }
 };
 
 export const blogSchemas = {

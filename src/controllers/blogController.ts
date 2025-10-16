@@ -1,6 +1,7 @@
 import { Request, Response } from 'express';
 import Blog from '../models/blogModel';
 import { DecodedToken } from './authController';
+import Category from '../models/categoriesModel';
 
 export async function createBlog(req: Request, res: Response) {
   try {
@@ -10,15 +11,20 @@ export async function createBlog(req: Request, res: Response) {
     }
 
     const { title, content, tags, categories, coverImageUrl, isPublished } = req.body;
+    const normalizedCategories = Array.isArray(categories)
+      ? categories.map((c: any) => String(c).trim()).filter(Boolean)
+      : typeof categories === 'string' && categories.length
+      ? categories.split(',').map((c: string) => c.trim()).filter(Boolean)
+      : [];
 
     const doc = await Blog.create({
       title,
       content,
       tags,
-      categories,
+      categories: normalizedCategories,
       coverImageUrl,
       isPublished: !!isPublished,
-      author: user.sub // JWT’den gelen kullanıcı id
+      author: user.sub
     });
 
     return res.status(201).json({ ok: true, blog: doc });
@@ -42,5 +48,8 @@ export async function showBlogPage(req: Request, res: Response) {
 }
 
 export async function newBlogForm(req: Request, res: Response) {
-  res.render('blogs/new', { title: 'Yeni Blog Yazısı' });
+  const categories = await Category.find({ isActive: true, kind: { $in: ['blog', 'both'] } })
+    .sort({ name: 1 })
+    .lean();
+  res.render('blogs/new', { title: 'Yeni Blog Yazısı', categories });
 }

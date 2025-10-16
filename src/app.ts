@@ -16,6 +16,7 @@ import blogRouter from './routes/blog';
 import { attachUserToLocals } from './controllers/authController';
 import newsRouter from './routes/news';
 import './models/categoriesModel'; // Category modelini kaydet (populate için gerekli)
+import session from 'express-session';
 
 const app = express();
 
@@ -36,7 +37,15 @@ app.use(express.static(path.join(__dirname, '../public')));
 app.use(express.json());
 app.use(express.urlencoded({ extended: true }));
 
-// Kullanıcı bilgisini EJS'e geçir
+// Yeni: session middleware (EJS/web için)
+app.use(session({
+  secret: process.env.SESSION_SECRET || 'dev_secret_change_me',
+  resave: false,
+  saveUninitialized: false,
+  cookie: { httpOnly: true, sameSite: 'lax', maxAge: 60 * 60 * 1000 }
+}));
+
+// Kullanıcı bilgisini EJS'e geçir (session’dan veya JWT fallback)
 app.use(attachUserToLocals);
 
 app.use('/', indexRouter);
