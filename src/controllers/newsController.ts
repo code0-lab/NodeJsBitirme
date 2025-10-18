@@ -8,12 +8,12 @@ import { AppError } from '../services/authService';
 
 export const listNewsPage = asyncHandler(async (req: Request, res: Response) => {
   const limit = 9;
-  const totalCount = await News.countDocuments({});
+  const totalCount = await News.countDocuments({ isActive: true });
   const totalPages = Math.max(1, Math.ceil(totalCount / limit));
   const currentPage = Math.min(Math.max(Number(req.query.page) || 1, 1), totalPages);
   const skip = (currentPage - 1) * limit;
 
-  const items = await News.find()
+  const items = await News.find({ isActive: true })
     .sort({ createdAt: -1 })
     .skip(skip)
     .limit(limit)
@@ -21,9 +21,16 @@ export const listNewsPage = asyncHandler(async (req: Request, res: Response) => 
     .populate('category', 'name')
     .lean();
 
+  const displayNews = items.map((n: any) => {
+    const raw = typeof n.content === 'string' ? n.content : '';
+    const plain = raw.replace(/<[^>]+>/g, '').trim();
+    const excerpt = plain.length > 0 ? (plain.length > 220 ? plain.slice(0, 220) + '…' : plain) : '';
+    return { ...n, excerpt };
+  });
+
   res.render('news/index', {
     title: 'Haberler',
-    news: items,
+    news: displayNews,
     currentPage,
     totalPages
   });

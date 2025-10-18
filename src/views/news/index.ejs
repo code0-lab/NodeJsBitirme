@@ -32,50 +32,31 @@
       <div class="blog-grid">
         <% news.forEach(function(n){ %>
           <article class="card blog-card">
-            <% if (n.imageUrl) { %>
-              <img class="blog-cover" src="<%= n.imageUrl %>" alt="<%= n.title %> görsel" />
-            <% } %>
-            <div class="card-body">
-              <h2 class="card-title"><a href="/news/<%= n._id %>"><%= n.title %></a></h2>
-              <p class="muted">
-                Kategori: <%= n.category?.name || 'Belirtilmemiş' %> ·
-                Yazar: <%= n.author?.name || 'Anonim' %>
-              </p>
-              <a class="btn" href="/news/<%= n._id %>">Görüntüle</a>
-            </div>
+            <a class="card-link" href="/news/<%= n._id %>">
+              <div class="cover-wrapper">
+                <% if (n.imageUrl) { %>
+                  <img class="blog-cover" src="<%= n.imageUrl %>" alt="<%= n.title %> görsel" />
+                <% } else { %>
+                  <div class="blog-cover blog-cover-placeholder"></div>
+                <% } %>
+                <div class="preview-overlay">
+                  <p class="preview-text"><%= n.excerpt %></p>
+                </div>
+              </div>
+              <div class="card-body">
+                <h2 class="card-title"><%= n.title %></h2>
+                <p class="muted">
+                  Kategori: <%= n.category?.name || 'Belirtilmemiş' %> ·
+                  Yazar: <%= n.author?.name || 'Anonim' %>
+                </p>
+              </div>
+            </a>
           </article>
         <% }) %>
       </div>
 
-      <!-- Sayfalama -->
       <% if (typeof totalPages !== 'undefined' && totalPages > 1) { %>
-        <nav class="pagination" aria-label="Sayfalama">
-          <ul class="pagination-list">
-            <li>
-              <% if (currentPage > 1) { %>
-                <a class="btn outline" href="/news?page=<%= currentPage - 1 %>">Önceki</a>
-              <% } else { %>
-                <span class="btn outline disabled">Önceki</span>
-              <% } %>
-            </li>
-            <li class="pages">
-              <% for (let p = 1; p <= totalPages; p++) { %>
-                <% if (p === currentPage) { %>
-                  <span class="page-number active"><%= p %></span>
-                <% } else { %>
-                  <a class="page-number" href="/news?page=<%= p %>"><%= p %></a>
-                <% } %>
-              <% } %>
-            </li>
-            <li>
-              <% if (currentPage < totalPages) { %>
-                <a class="btn outline" href="/news?page=<%= currentPage + 1 %>">Sonraki</a>
-              <% } else { %>
-                <span class="btn outline disabled">Sonraki</span>
-              <% } %>
-            </li>
-          </ul>
-        </nav>
+        <%- include('../partials/navigationButton', { currentPage, totalPages, paginationPath: '/news' }) %>
       <% } %>
     <% } %>
   </main>

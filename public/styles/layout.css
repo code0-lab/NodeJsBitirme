@@ -155,12 +155,8 @@ body.theme-dark .theme-toggle svg .moon { fill: #eceff1; filter: drop-shadow(0 0
   padding: 1rem;
   text-align: center;
   /* Alta sabitle */
-  position: fixed;
-  left: 0;
-  right: 0;
-  bottom: 0;
+  position: static;
   width: 100%;
-  z-index: 998;
 }
 .footer a { color: var(--text); text-decoration: underline; }
 

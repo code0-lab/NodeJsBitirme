@@ -14,7 +14,9 @@
 
   <main class="container">
     <article class="auth-card">
-      <header class="auth-title"><%= blog.title %></header>
+      <header>
+        <h1 class="blog-title"><%= blog.title %></h1>
+      </header>
       <% if (blog.coverImageUrl) { %>
         <img class="blog-cover" src="<%= blog.coverImageUrl %>" alt="<%= blog.title %> kapak" />
       <% } %>

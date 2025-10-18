@@ -7,8 +7,15 @@ const router = Router();
 router.get('/', async (req, res) => {
   try {
     const [news, blogs] = await Promise.all([
-      News.find().sort({ createdAt: -1 }).populate('category', 'name').populate('author', 'name').lean(),
-      Blog.find().sort({ createdAt: -1 }).populate('author', 'name').lean(),
+      News.find({ isActive: true })
+        .sort({ createdAt: -1 })
+        .populate('category', 'name')
+        .populate('author', 'name')
+        .lean(),
+      Blog.find({ isPublished: true })
+        .sort({ createdAt: -1 })
+        .populate('author', 'name')
+        .lean(),
     ]);
 
     res.render('index', { title: 'Yggdrasil', news, blogs });

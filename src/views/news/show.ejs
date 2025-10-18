@@ -14,7 +14,9 @@
 
   <main class="container">
     <article class="auth-card">
-      <header class="auth-title"><%= news.title %></header>
+      <header>
+        <h1 class="news-title"><%= news.title %></h1>
+      </header>
       <% if (news.imageUrl) { %>
         <img class="blog-cover" src="<%= news.imageUrl %>" alt="<%= news.title %> görsel" />
       <% } %>

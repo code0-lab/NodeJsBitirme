@@ -164,5 +164,38 @@ body.theme-dark .btn.outline {
   cursor: pointer;
 }
 .card-link:hover { text-decoration: none; }
+/* Reusable pagination component */
+.pagination {
+  margin-top: 16px;
+  display: flex;
+  justify-content: center;
+}
+.pagination-list {
+  list-style: none;
+  display: flex;
+  gap: 8px;
+  padding: 0;
+  margin: 0;
+  align-items: center;
+}
+.page-number {
+  display: inline-block;
+  padding: 8px 12px;
+  border: 1px solid var(--line);
+  border-radius: 999px;
+  text-decoration: none;
+  color: var(--text);
+  transition: transform .12s ease, background-color .12s ease, border-color .12s ease;
+}
+.page-number:hover {
+  transform: translateY(-1px);
+  border-color: var(--text);
+}
+.page-number.active {
+  background: var(--text);
+  color: #fff;
+  border-color: var(--text);
+}
+.btn.disabled { opacity: 0.5; pointer-events: none; }
 /* Hover halinde hafif vurgulama isterseniz (opsiyonel) */
 /* .card-link:hover { box-shadow: 0 2px 8px rgba(0,0,0,0.08); } */
