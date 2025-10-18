@@ -24,7 +24,7 @@ export const listNewsPage = asyncHandler(async (req: Request, res: Response) => 
   const displayNews = items.map((n: any) => {
     const raw = typeof n.content === 'string' ? n.content : '';
     const plain = raw.replace(/<[^>]+>/g, '').trim();
-    const excerpt = plain.length > 0 ? (plain.length > 220 ? plain.slice(0, 220) + '…' : plain) : '';
+    const excerpt = plain.length > 220 ? plain.slice(0, 220) + '…' : plain;
     return { ...n, excerpt };
   });
 

@@ -29,31 +29,13 @@
     <% if (!news || !news.length) { %>
       <p class="muted">Henüz haber yok.</p>
     <% } else { %>
-      <div class="blog-grid">
-        <% news.forEach(function(n){ %>
-          <article class="card blog-card">
-            <a class="card-link" href="/news/<%= n._id %>">
-              <div class="cover-wrapper">
-                <% if (n.imageUrl) { %>
-                  <img class="blog-cover" src="<%= n.imageUrl %>" alt="<%= n.title %> görsel" />
-                <% } else { %>
-                  <div class="blog-cover blog-cover-placeholder"></div>
-                <% } %>
-                <div class="preview-overlay">
-                  <p class="preview-text"><%= n.excerpt %></p>
-                </div>
-              </div>
-              <div class="card-body">
-                <h2 class="card-title"><%= n.title %></h2>
-                <p class="muted">
-                  Kategori: <%= n.category?.name || 'Belirtilmemiş' %> ·
-                  Yazar: <%= n.author?.name || 'Anonim' %>
-                </p>
-              </div>
-            </a>
-          </article>
-        <% }) %>
-      </div>
+      <%- include('../partials/cardsGrid', { 
+        items: news, 
+        imageKey: 'imageUrl', 
+        titleKey: 'title', 
+        linkBase: '/news', 
+        showCategory: true 
+      }) %>
 
       <% if (typeof totalPages !== 'undefined' && totalPages > 1) { %>
         <%- include('../partials/navigationButton', { currentPage, totalPages, paginationPath: '/news' }) %>

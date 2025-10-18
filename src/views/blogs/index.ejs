@@ -21,29 +21,13 @@
     <% if (!blogs || !blogs.length) { %>
       <p class="muted">Henüz blog yazısı yok.</p>
     <% } else { %>
-      <div class="blog-grid">
-        <% blogs.forEach(function(b){ %>
-          <article class="card blog-card">
-            <a class="card-link" href="/blogs/<%= b._id %>">
-              <div class="cover-wrapper">
-                <% if (b.coverImageUrl) { %>
-                  <img class="blog-cover" src="<%= b.coverImageUrl %>" alt="<%= b.title %> kapak" />
-                <% } else { %>
-                  <div class="blog-cover blog-cover-placeholder"></div>
-                <% } %>
-                <div class="preview-overlay">
-                  <p class="preview-text"><%= b.excerpt %></p>
-                </div>
-              </div>
-              <div class="card-body">
-                <h2 class="card-title"><%= b.title %></h2>
-                <p class="muted">Yazar: <%= b.author?.name || 'Anonim' %></p>
-                <!-- Görüntüle butonu kaldırıldı -->
-              </div>
-            </a>
-          </article>
-        <% }) %>
-      </div>
+      <%- include('../partials/cardsGrid', { 
+        items: blogs, 
+        imageKey: 'coverImageUrl', 
+        titleKey: 'title', 
+        linkBase: '/blogs', 
+        showCategory: false 
+      }) %>
 
       <% if (typeof totalPages !== 'undefined' && totalPages > 1) { %>
         <%- include('../partials/navigationButton', { currentPage, totalPages, paginationPath: '/blogs' }) %>

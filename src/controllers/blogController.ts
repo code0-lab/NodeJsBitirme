@@ -50,11 +50,11 @@ export const listBlogsPage = asyncHandler(async (req: Request, res: Response) =>
   const displayBlogs = blogs.map((b: any) => {
     const raw = typeof b.content === 'string' ? b.content : '';
     const plain = raw.replace(/<[^>]+>/g, '').trim();
-    const excerpt = plain.length > 0 ? (plain.length > 220 ? plain.slice(0, 220) + '…' : plain) : '';
+    const excerpt = plain.length > 220 ? plain.slice(0, 220) + '…' : plain;
     return { ...b, excerpt };
   });
 
-  res.render('blogs/index', { title: 'Blog', blogs: displayBlogs, currentPage, totalPages });
+  res.render('blogs/index', { title: 'Blog Yazıları', blogs: displayBlogs, currentPage, totalPages });
 });
 
 export const showBlogPage = asyncHandler(async (req: Request, res: Response) => {
