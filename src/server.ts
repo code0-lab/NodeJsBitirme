@@ -40,3 +40,12 @@ async function start() {
 }
 
 start();
+
+process.on('unhandledRejection', (reason: any) => {
+  console.error('Unhandled Rejection:', reason);
+});
+
+process.on('uncaughtException', (err: Error) => {
+  console.error('Uncaught Exception:', err);
+  // Üretimde burada process.exit(1) tercih edebilirsiniz
+});

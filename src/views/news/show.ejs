@@ -119,8 +119,8 @@
           }
         }
 
-        likeBtn?.addEventListener('click', () => postReaction(`/api/news/${newsId}/like`));
-        dislikeBtn?.addEventListener('click', () => postReaction(`/api/news/${newsId}/dislike`));
+        likeBtn?.addEventListener('click', () => postReaction(`/news/${newsId}/like`));
+        dislikeBtn?.addEventListener('click', () => postReaction(`/news/${newsId}/dislike`));
       </script>
     </article>
   </main>

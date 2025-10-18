@@ -35,4 +35,11 @@ router.get('/v1/categories', listCategories);
 router.get('/v1/categories/:id', getCategory);
 router.post('/v1/categories', authenticateJWT, authorizeRoles('admin'), createCategory);
 
+// v1 Auth
+router.post('/v1/auth/register', register);
+router.post('/v1/auth/login', login);
+router.get('/v1/auth/profile', authenticateJWT, profile);
+router.post('/v1/auth/refresh', authenticateJWT, refresh);
+router.post('/v1/auth/logout', authenticateJWT, logout);
+
 export default router;

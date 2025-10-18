@@ -17,6 +17,7 @@ import { attachUserToLocals } from './controllers/authController';
 import newsRouter from './routes/news';
 import './models/categoriesModel'; // Category modelini kaydet (populate için gerekli)
 import session from 'express-session';
+import { errorHandler, notFoundHandler } from './middleware/errorHandler';
 
 const app = express();
 
@@ -57,11 +58,22 @@ app.use('/api', apiRouter);
 app.use('/api-docs', swaggerUi.serve, swaggerUi.setup(swaggerSpec));
 
 // 404 handler: API için JSON, web için EJS
-app.use((req, res) => {
-  if (req.path.startsWith('/api')) {
-    return res.status(404).json({ error: 'Endpoint bulunamadı' });
-  }
-  res.status(404).render('errors/404', { title: '404 - Kayıp Haber' });
-});
+app.use(notFoundHandler);
+
+// Global error handler (en sonda)
+app.use(errorHandler);
 
 export default app;
+
+if (process.env.NODE_ENV === 'development') {
+  app.get('/api/dev-cast', (_req, _res, next) =>
+    next(Object.assign(new Error('bad'), { name: 'CastError' }))
+  );
+  app.get('/api/dev-validation', (_req, _res, next) =>
+    next(Object.assign(new Error('validation'), {
+      name: 'ValidationError', errors: { title: { message: 'Başlık zorunlu' } }
+    }))
+  );
+  app.get('/api/dev-500', (_req, _res, next) => next(new Error('Boom')));
+  app.get('/dev-500', (_req, _res, next) => next(new Error('Boom')));
+}
