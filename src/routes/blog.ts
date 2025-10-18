@@ -1,6 +1,7 @@
 import { Router } from 'express';
 import { newBlogForm, listBlogsPage, showBlogPage, createBlog, editBlogForm, updateBlog, deleteBlog, togglePublish } from '../controllers/blogController';
 import { authenticateWeb } from '../controllers/authController';
+import { likeBlog, dislikeBlog } from '../controllers/restControllers/apiBlogController';
 
 const router = Router();
 
@@ -14,6 +15,10 @@ router.patch('/:id', authenticateWeb, updateBlog);
 router.delete('/:id', authenticateWeb, deleteBlog);
 // Yeni: yayın durumu ucu
 router.patch('/:id/publish', authenticateWeb, togglePublish);
+
+// Blog reactions (web)
+router.post('/:id/like', authenticateWeb, likeBlog);
+router.post('/:id/dislike', authenticateWeb, dislikeBlog);
 
 // Form fallback’ları (PATCH/DELETE desteklemeyen durumlar için)
 router.post('/:id', authenticateWeb, updateBlog);

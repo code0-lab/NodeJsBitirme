@@ -11,6 +11,8 @@ export interface IBlog extends Document {
   publishedAt?: Date;
   createdAt: Date;
   updatedAt: Date;
+  likesID?: mongoose.Types.ObjectId[]; // beğenen kullanıcı id'leri
+  dislikesID?: mongoose.Types.ObjectId[]; // beğenmeyen kullanıcı id'leri
 }
 
 const blogSchema = new Schema<IBlog>(
@@ -22,7 +24,9 @@ const blogSchema = new Schema<IBlog>(
     tags: [{ type: String, trim: true }],
     categories: [{ type: Schema.Types.ObjectId, ref: 'Category' }],
     isPublished: { type: Boolean, default: false },
-    publishedAt: { type: Date }
+    publishedAt: { type: Date },
+    likesID: [{ type: Schema.Types.ObjectId, ref: 'User', default: [] }],
+    dislikesID: [{ type: Schema.Types.ObjectId, ref: 'User', default: [] }]
   },
   { timestamps: true }
 );

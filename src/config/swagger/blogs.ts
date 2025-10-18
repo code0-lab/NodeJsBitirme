@@ -139,6 +139,54 @@ export const blogPaths = {
       }
     }
   },
+  '/api/v1/blogs/{id}/like': {
+    post: {
+      tags: ['Blogs'],
+      summary: 'Blogu beğen veya beğeniyi geri al (v1)',
+      description: 'Aynı butona tekrar basılırsa beğeni geri alınır; tersine basılırsa dislike -> like dönüşür.',
+      security: [{ bearerAuth: [] }],
+      parameters: [
+        { name: 'id', in: 'path', required: true, schema: { type: 'string' } }
+      ],
+      responses: {
+        '200': {
+          description: 'Reaksiyon sonucu',
+          content: {
+            'application/json': {
+              schema: { $ref: '#/components/schemas/ReactionResult' }
+            }
+          }
+        },
+        '401': { description: 'Yetkisiz' },
+        '404': { description: 'Blog bulunamadı' },
+        '400': { description: 'Geçersiz istek' }
+      }
+    }
+  },
+  '/api/v1/blogs/{id}/dislike': {
+    post: {
+      tags: ['Blogs'],
+      summary: 'Blogu beğenmeme veya geri alma (v1)',
+      description: 'Aynı butona tekrar basılırsa beğenmeme geri alınır; tersine basılırsa like -> dislike dönüşür.',
+      security: [{ bearerAuth: [] }],
+      parameters: [
+        { name: 'id', in: 'path', required: true, schema: { type: 'string' } }
+      ],
+      responses: {
+        '200': {
+          description: 'Reaksiyon sonucu',
+          content: {
+            'application/json': {
+              schema: { $ref: '#/components/schemas/ReactionResult' }
+            }
+          }
+        },
+        '401': { description: 'Yetkisiz' },
+        '404': { description: 'Blog bulunamadı' },
+        '400': { description: 'Geçersiz istek' }
+      }
+    }
+  },
   '/api/v1/search/blogs': {
     get: {
       tags: ['Blogs'],
@@ -182,6 +230,8 @@ export const blogSchemas = {
       coverImageUrl: { type: 'string' },
       isPublished: { type: 'boolean' },
       author: { type: 'string', description: 'Kullanıcı id' },
+      likesID: { type: 'array', items: { type: 'string' }, description: 'Beğenen kullanıcı id’leri' },
+      dislikesID: { type: 'array', items: { type: 'string' }, description: 'Beğenmeyen kullanıcı id’leri' },
       createdAt: { type: 'string', format: 'date-time' },
       updatedAt: { type: 'string', format: 'date-time' }
     }

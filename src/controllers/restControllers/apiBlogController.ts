@@ -113,3 +113,107 @@ export async function deleteBlog(req: Request, res: Response) {
     return res.status(400).json({ error: (err as Error).message });
   }
 }
+
+export async function likeBlog(req: Request, res: Response) {
+  try {
+    const user = (req as any).user as DecodedToken | undefined;
+    if (!user) return res.status(401).json({ error: 'Yetkisiz: giriş yapın' });
+
+    const blog = await Blog.findById(req.params.id);
+    if (!blog) return res.status(404).json({ error: 'Blog bulunamadı' });
+
+    const userId = user.sub;
+    const likesArray = Array.isArray((blog as any).likesID) ? (blog as any).likesID : [];
+    const dislikesArray = Array.isArray((blog as any).dislikesID) ? (blog as any).dislikesID : [];
+
+    const likedByUser = likesArray.some((id: any) => String(id) === String(userId));
+    const dislikedByUser = dislikesArray.some((id: any) => String(id) === String(userId));
+
+    let updated: any;
+    let action: string;
+
+    if (likedByUser) {
+      updated = await Blog.findByIdAndUpdate(
+        req.params.id,
+        { $pull: { likesID: userId } },
+        { new: true }
+      ).lean();
+      action = 'unliked';
+    } else if (dislikedByUser) {
+      updated = await Blog.findByIdAndUpdate(
+        req.params.id,
+        { $pull: { dislikesID: userId }, $addToSet: { likesID: userId } },
+        { new: true }
+      ).lean();
+      action = 'switched_to_like';
+    } else {
+      updated = await Blog.findByIdAndUpdate(
+        req.params.id,
+        { $addToSet: { likesID: userId } },
+        { new: true }
+      ).lean();
+      action = 'liked';
+    }
+
+    return res.json({
+      ok: true,
+      action,
+      likesCount: Array.isArray(updated?.likesID) ? updated!.likesID.length : 0,
+      dislikesCount: Array.isArray(updated?.dislikesID) ? updated!.dislikesID.length : 0
+    });
+  } catch (err) {
+    return res.status(400).json({ error: (err as Error).message });
+  }
+}
+
+export async function dislikeBlog(req: Request, res: Response) {
+  try {
+    const user = (req as any).user as DecodedToken | undefined;
+    if (!user) return res.status(401).json({ error: 'Yetkisiz: giriş yapın' });
+
+    const blog = await Blog.findById(req.params.id);
+    if (!blog) return res.status(404).json({ error: 'Blog bulunamadı' });
+
+    const userId = user.sub;
+    const likesArray = Array.isArray((blog as any).likesID) ? (blog as any).likesID : [];
+    const dislikesArray = Array.isArray((blog as any).dislikesID) ? (blog as any).dislikesID : [];
+
+    const likedByUser = likesArray.some((id: any) => String(id) === String(userId));
+    const dislikedByUser = dislikesArray.some((id: any) => String(id) === String(userId));
+
+    let updated: any;
+    let action: string;
+
+    if (dislikedByUser) {
+      updated = await Blog.findByIdAndUpdate(
+        req.params.id,
+        { $pull: { dislikesID: userId } },
+        { new: true }
+      ).lean();
+      action = 'undisliked';
+    } else if (likedByUser) {
+      updated = await Blog.findByIdAndUpdate(
+        req.params.id,
+        { $pull: { likesID: userId }, $addToSet: { dislikesID: userId } },
+        { new: true }
+      ).lean();
+      action = 'switched_to_dislike';
+    } else {
+      updated = await Blog.findByIdAndUpdate(
+        req.params.id,
+        { $addToSet: { dislikesID: userId } },
+        { new: true }
+      ).lean();
+      action = 'disliked';
+    }
+
+    return res.json({
+      ok: true,
+      action,
+      likesCount: Array.isArray(updated?.likesID) ? updated!.likesID.length : 0,
+      dislikesCount: Array.isArray(updated?.dislikesID) ? updated!.dislikesID.length : 0
+    });
+  } catch (err) {
+    return res.status(400).json({ error: (err as Error).message });
+  }
+}

@@ -58,7 +58,10 @@ export const listBlogsPage = asyncHandler(async (req: Request, res: Response) =>
 });
 
 export const showBlogPage = asyncHandler(async (req: Request, res: Response) => {
-  const blog = await Blog.findById(req.params.id).populate('author', 'name').lean();
+  const blog = await Blog.findById(req.params.id)
+    .populate('author', 'name')
+    .populate('categories', 'name')
+    .lean();
   if (!blog) return res.status(404).render('errors/404', { title: '404 - Blog Yok' });
   res.render('blogs/show', { title: blog.title, blog });
 });

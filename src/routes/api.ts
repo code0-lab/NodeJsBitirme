@@ -1,6 +1,6 @@
 import { Router, Request } from 'express';
 import { authenticateJWT, authorizeRoles } from '../controllers/authController';
-import { listBlogs, getBlog, createBlog, updateBlog, deleteBlog } from '../controllers/restControllers/apiBlogController';
+import { listBlogs, getBlog, createBlog, updateBlog, deleteBlog, likeBlog, dislikeBlog } from '../controllers/restControllers/apiBlogController';
 import { register, login, profile, refresh, logout } from '../controllers/restControllers/apiAuthController';
 import { searchBlogs, searchNews } from '../controllers/restControllers/apiSearchController';
 import { listNews, getNews, createNews, updateNews, deleteNews, likeNews, dislikeNews } from '../controllers/restControllers/apiNewsController';
@@ -48,6 +48,8 @@ router.get('/v1/blogs/:id', getBlog);
 router.post('/v1/blogs', authenticateJWT, createBlog);
 router.put('/v1/blogs/:id', authenticateJWT, updateBlog);
 router.delete('/v1/blogs/:id', authenticateJWT, deleteBlog);
+router.post('/v1/blogs/:id/like', authenticateJWT, likeBlog);
+router.post('/v1/blogs/:id/dislike', authenticateJWT, dislikeBlog);
 
 // v1 News
 router.get('/v1/news', listNews);

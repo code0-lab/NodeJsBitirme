@@ -8,21 +8,18 @@
   <link rel="stylesheet" href="/styles/components.css" />
   <link rel="stylesheet" href="/styles/layout.css" />
   <link rel="stylesheet" href="/styles/pages/blog.css" />
+  <link rel="stylesheet" href="/styles/pages/news.css" />
 </head>
 <body>
   <%- include('../partials/navbar') %>
 
   <main class="container">
-    <article class="auth-card">
-      <header>
-        <h1 class="blog-title"><%= blog.title %></h1>
-      </header>
-      <% if (blog.coverImageUrl) { %>
-        <img class="blog-cover" src="<%= blog.coverImageUrl %>" alt="<%= blog.title %> kapak" />
-      <% } %>
-      <div class="blog-content"><%= blog.content %></div>
-      <p class="muted">Yazar: <%= blog.author?.name || 'Anonim' %></p>
-    </article>
+     <%- include('../partials/showItem', { 
+      item: blog, 
+      reactionBase: '/blogs', 
+      imageKey: 'coverImageUrl', 
+      categoryKey: 'categories' 
+    }) %>
   </main>
 
   <%- include('../partials/footer') %>
