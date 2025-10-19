@@ -20,6 +20,7 @@
       imageKey: 'coverImageUrl', 
       categoryKey: 'categories' 
     }) %>
+     <%- include('../partials/comments/comment', { subjectModel: 'Blog', subjectId: blog._id, currentUser: user }) %>
   </main>
 
   <%- include('../partials/footer') %>

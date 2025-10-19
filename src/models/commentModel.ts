@@ -7,7 +7,7 @@ export interface IComment extends Document {
   author: mongoose.Types.ObjectId;
   subjectModel: CommentSubjectModel; // 'Blog' veya 'News'
   subject: mongoose.Types.ObjectId;  // ilgili Blog/News id'si
-  isActive: { type: Boolean, default: true };
+  isActive: boolean;
   createdAt: Date;
   updatedAt: Date;
 }
@@ -17,7 +17,8 @@ const commentSchema = new Schema<IComment>(
     content: { type: String, required: true, trim: true, minlength: 1, maxlength: 2000 },
     author: { type: Schema.Types.ObjectId, ref: 'User', required: true },
     subjectModel: { type: String, enum: ['Blog', 'News'], required: true },
-    subject: { type: Schema.Types.ObjectId, refPath: 'subjectModel', required: true }
+    subject: { type: Schema.Types.ObjectId, refPath: 'subjectModel', required: true },
+    isActive: { type: Boolean, default: true }
   },
   { timestamps: true }
 );

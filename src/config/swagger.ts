@@ -8,7 +8,6 @@ import { commentPaths, commentSchemas } from './swagger/comments';
 
 export const swaggerSpec = {
   ...baseSpec,
-  // paths ekleme sırası UI’daki görünümü etkiler
   paths: {
     ...authPaths,
     ...blogPaths,

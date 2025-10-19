@@ -21,10 +21,49 @@ function toPublic(comment: any) {
     author,
     subjectModel: comment.subjectModel,
     subject: String(comment.subject),
+    isActive: !!comment.isActive,
     createdAt: comment.createdAt,
     updatedAt: comment.updatedAt
   };
 }
+
+// Yorum yönetimi: listeleme (user: kendi yorumları, admin: tüm yorumlar)
+export const listComments = asyncHandler(async (req: Request, res: Response) => {
+  const me = (req as any).user as DecodedToken | undefined;
+  if (!me) throw new AppError(401, 'Yetkisiz: token gerekli');
+
+  const admin = isAdmin(req);
+  const { author, subjectModel, subject, isActive } = req.query as {
+    author?: string; subjectModel?: 'Blog' | 'News'; subject?: string; isActive?: string;
+  };
+
+  const filter: any = {};
+  // Kullanıcı: sadece kendi yorumları
+  if (!admin) {
+    filter.author = me.sub;
+  } else {
+    // Admin: opsiyonel filtreler
+    if (author) filter.author = author;
+    if (subjectModel) filter.subjectModel = subjectModel;
+    if (subject) filter.subject = subject;
+    if (typeof isActive !== 'undefined') {
+      if (isActive === 'true') filter.isActive = true;
+      else if (isActive === 'false') filter.isActive = false;
+    }
+  }
+  // Her iki rolde de opsiyonel konu filtreleri kullanılabilsin
+  if (!admin) {
+    if (subjectModel) filter.subjectModel = subjectModel;
+    if (subject) filter.subject = subject;
+  }
+
+  const items = await Comment.find(filter)
+    .sort({ createdAt: -1 })
+    .populate('author', '_id name profilePicture')
+    .lean();
+
+  return res.json({ items: items.map(toPublic) });
+});
 
 // Blog için yorumları listele
 export const listBlogComments = asyncHandler(async (req: Request, res: Response) => {
@@ -63,6 +102,7 @@ export const listNewsComments = asyncHandler(async (req: Request, res: Response)
 });
 
 // Yorum oluştur
+// createComment içinde
 export const createComment = asyncHandler(async (req: Request, res: Response) => {
   const me = (req as any).user as DecodedToken | undefined;
   if (!me) throw new AppError(401, 'Yetkisiz: token gerekli');
@@ -75,7 +115,6 @@ export const createComment = asyncHandler(async (req: Request, res: Response) =>
 
   if (!content || !subjectModel || !subject) throw new AppError(400, 'content, subjectModel, subject gerekli');
 
-  // Parent doğrula
   if (subjectModel === 'Blog') {
     const exists = await Blog.exists({ _id: subject });
     if (!exists) throw new AppError(404, 'Blog bulunamadı');
@@ -84,6 +123,16 @@ export const createComment = asyncHandler(async (req: Request, res: Response) =>
     if (!exists) throw new AppError(404, 'Haber bulunamadı');
   } else {
     throw new AppError(400, 'subjectModel Blog veya News olmalı');
+  }
+
+  // Tek yorum kuralı: varsa mevcut yorumu güncelle/yeniden etkinleştir
+  const existing = await Comment.findOne({ author: me.sub, subjectModel, subject });
+  if (existing) {
+    existing.content = String(content).trim();
+    existing.isActive = true;
+    await existing.save();
+    await existing.populate('author', '_id name profilePicture');
+    return res.status(200).json({ ok: true, item: toPublic(existing) });
   }
 
   const created = await Comment.create({

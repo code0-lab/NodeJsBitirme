@@ -38,7 +38,8 @@ import {
   listNewsComments,
   createComment,
   updateComment,
-  deleteComment
+  deleteComment,
+  listComments
 } from '../controllers/restControllers/apiCommentController';
 import {
   adminListUsers,
@@ -94,6 +95,7 @@ router.post('/v1/news/:id/like', authenticateJWT, reactionParamRules, handleVali
 router.post('/v1/news/:id/dislike', authenticateJWT, reactionParamRules, handleValidation, dislikeNews);
 
 // v1 Comments
+router.get('/v1/comments', authenticateJWT, listComments);
 router.get('/v1/blogs/:id/comments', validateObjectIdParam, handleValidation, listBlogComments);
 router.get('/v1/news/:id/comments', validateObjectIdParam, handleValidation, listNewsComments);
 router.post('/v1/comments', authenticateJWT, commentCreateRules, handleValidation, createComment);
