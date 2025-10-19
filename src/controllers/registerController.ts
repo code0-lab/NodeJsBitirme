@@ -12,12 +12,7 @@ export async function register(req: Request, res: Response) {
   try {
     await registerUser({ email, password, name });
 
-    return res.status(201).render('auth/register', {
-      title: 'Kayıt Ol',
-      errors: [],
-      values: {},
-      success: 'Kayıt başarılı! Giriş yapabilirsiniz.'
-    });
+    return res.redirect(`/auth/login?success=${encodeURIComponent('Kayıt başarılı! Giriş yapabilirsiniz.')}`);
   } catch (err) {
     const status = err instanceof AppError ? err.status : 500;
     const msg = err instanceof AppError ? err.message : 'Beklenmeyen bir hata oluştu.';

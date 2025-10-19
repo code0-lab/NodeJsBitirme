@@ -6,173 +6,14 @@
   <meta name="viewport" content="width=device-width, initial-scale=1" />
   <link href="/styles/main.css" rel="stylesheet" />
   <link href="/styles/pages/blog.css" rel="stylesheet" />
-  <style>
-    /* Sayfa düzeni: global container + card yüzeyleri */
-    .settings-grid {
-      display: grid;
-      grid-template-columns: 260px 1fr;
-      gap: 24px;
-      align-items: start;
-    }
-    @media (max-width: 900px) {
-      .settings-grid { grid-template-columns: 1fr; }
-    }
-
-    /* Sidebar: card yüzey üzerinde menü */
-    .settings-sidebar {
-      padding: 12px;
-    }
-    .settings-link {
-      display: block;
-      padding: 10px 12px;
-      border-radius: 6px;
-      color: var(--text);
-      text-decoration: none;
-      border: 1px solid transparent;
-    }
-    .settings-link + .settings-link { margin-top: 6px; }
-    .settings-link:hover { background: rgba(0, 0, 0, 0.06); }
-    body.theme-dark .settings-link:hover { background: rgba(255, 255, 255, 0.08); }
-    .settings-link.active {
-      background: var(--surface);
-      border-color: var(--line);
-      color: var(--text);
-      font-weight: 600;
-    }
-
-    /* İçerik paneli: card yüzey + spacing */
-    .settings-content { padding: 16px; }
-    .section { display: grid; gap: 16px; max-width: 720px; }
-    .section h2 { margin: 0 0 8px; font-size: 20px; }
-
-    /* Form düzeni: mevcut components.css ile uyumlu */
-    .form-row { display: grid; grid-template-columns: 1fr 1fr; gap: 12px; }
-    @media (max-width: 768px) { .form-row { grid-template-columns: 1fr; } }
-    .form-actions { display: flex; gap: 12px; }
-
-    /* Avatar alanı */
-    .avatar-row {
-      display: grid;
-      grid-template-columns: 120px 1fr;
-      align-items: center;
-      gap: 16px;
-    }
-    @media (max-width: 600px) {
-      .avatar-row { grid-template-columns: 1fr; }
-    }
-    .avatar-preview {
-      width: 100px; height: 100px;
-      border-radius: 50%;
-      object-fit: cover;
-      border: 1px solid var(--line);
-      background: var(--surface);
-    }
-    .hint { color: var(--muted); font-size: 13px; }
-
-    /* Mesaj kutuları: components.css ile eşleşen alert stilleri */
-    .messages .alert { margin: 0; }
-  </style>
+  <link href="/styles/pages/profile.css" rel="stylesheet" />
 </head>
 <body>
   <%- include('../partials/navbar') %>
-  <main class="container">
+  <main class="container profile-container">
     <div class="settings-grid">
-      <aside class="card settings-sidebar" aria-label="Ayarlar">
-        <a href="/auth/profile?tab=edit" class="settings-link <%= tab === 'edit' ? 'active' : '' %>">Profili Düzenle</a>
-        <a href="/auth/profile?tab=privacy" class="settings-link <%= tab === 'privacy' ? 'active' : '' %>">Hesap Gizliliği</a>
-        <a href="/auth/profile?tab=comments" class="settings-link <%= tab === 'comments' ? 'active' : '' %>">Yorumlar</a>
-        <a href="/auth/profile?tab=blogs" class="settings-link <%= tab === 'blogs' ? 'active' : '' %>">Bloglarım</a>
-      </aside>
-
-      <section class="card settings-content">
-        <% if (tab === 'edit') { %>
-          <div class="section">
-            <h2>Profil Fotoğrafı</h2>
-            <div id="avatarMessages" class="messages"></div>
-            <form id="avatarForm" enctype="multipart/form-data">
-              <div class="avatar-row">
-                <img src="<%= user?.profilePicture || '/images/default-avatar.svg' %>" alt="Profil" id="avatarPreview" class="avatar-preview" />
-                <div class="form-group">
-                  <input id="avatar" name="avatar" type="file" accept=".png,.jpg,.jpeg,.webp,image/png,image/jpeg,image/webp" />
-                  <span class="hint">PNG, JPG, JPEG, WEBP • en fazla 2MB</span>
-                </div>
-              </div>
-              <div class="form-actions">
-                <button type="submit" class="btn">Yükle</button>
-              </div>
-            </form>
-
-            <hr />
-
-            <h2>Profil Bilgileri</h2>
-            <div id="infoMessages" class="messages"></div>
-            <form id="infoForm">
-              <div class="form-row">
-                <div class="form-group">
-                  <label for="name">Ad</label>
-                  <input id="name" name="name" type="text" value="<%= user?.name || '' %>" />
-                </div>
-                <div class="form-group">
-                  <label for="email">E-posta</label>
-                  <input id="email" name="email" type="email" value="<%= user?.email || '' %>" />
-                </div>
-              </div>
-              <div class="form-actions">
-                <button type="submit" class="btn">Kaydet</button>
-              </div>
-            </form>
-
-            <hr />
-
-            <h2>Şifre Değiştir</h2>
-            <div id="pwdMessages" class="messages"></div>
-            <form id="pwdForm">
-              <div class="form-row">
-                <div class="form-group">
-                  <label for="currentPassword">Mevcut Şifre</label>
-                  <input id="currentPassword" name="currentPassword" type="password" />
-                </div>
-                <div class="form-group">
-                  <label for="newPassword">Yeni Şifre</label>
-                  <input id="newPassword" name="newPassword" type="password" />
-                </div>
-              </div>
-              <div class="form-actions">
-                <button type="submit" class="btn">Değiştir</button>
-                <span class="hint">Minimum 8 karakter olmalı.</span>
-              </div>
-            </form>
-          </div>
-        <% } else if (tab === 'privacy') { %>
-          <div class="section">
-            <h2>Hesap Gizliliği</h2>
-            <p class="hint">Bu ayarlar örnek amaçlıdır; backend entegrasyonu eklenebilir.</p>
-            <div class="form-group">
-              <label><input type="checkbox" disabled /> Profilim herkese açık (yakında)</label>
-            </div>
-            <div class="form-group">
-              <label><input type="checkbox" disabled /> Arama motorları profilimi indekslesin (yakında)</label>
-            </div>
-          </div>
-        <% } else if (tab === 'comments') { %>
-          <div class="section">
-            <h2>Yorumlar</h2>
-            <p class="hint">Yorum tercihleri için backend alanı olmadığından arayüz örneği gösterilmektedir.</p>
-            <div class="form-group">
-              <label><input type="checkbox" disabled /> Gönderilerime yorum yapılmasına izin ver (yakında)</label>
-            </div>
-            <div class="form-group">
-              <label><input type="checkbox" disabled /> Yanıtlarda e-posta bildirimi al (yakında)</label>
-            </div>
-          </div>
-        <% } else if (tab === 'blogs') { %>
-          <div class="section">
-            <h2>Bloglarım</h2>
-            <div id="blogsMessages" class="messages"></div>
-            <div id="myBlogsContainer" class="blog-grid"></div>
-          </div>
-        <% } %>
-      </section>
+      <%- include('../partials/profile/sidebar') %>
+      <%- include('../partials/profile/content') %>
     </div>
   </main>
 
@@ -262,99 +103,113 @@
       }
     });
 
-    // Bloglarım: listeyi yükle ve render et
-    async function loadMyBlogs() {
-      const msgs = document.getElementById('blogsMessages');
-      const container = document.getElementById('myBlogsContainer');
-      if (!container) return;
+    // Burada eski loadMyBlogs fonksiyonu ve çağrısını kaldırıyoruz
+    // Kullanıcılar: listele, rol güncelle, sil (yalnızca admin)
+    async function loadAdminUsers() {
+      const msgs = document.getElementById('usersMessages');
+      if (!msgs) return;
       msgs.innerHTML = '';
-      container.innerHTML = '';
 
       try {
-        const res = await fetch('/auth/profile/blogs');
+        const res = await fetch('/api/v1/admin/users', { credentials: 'same-origin' });
         const data = await res.json();
-        if (!res.ok) throw new Error(data?.error || 'Listeleme başarısız');
-
-        const blogs = Array.isArray(data.blogs) ? data.blogs : [];
-        if (!blogs.length) {
-          container.innerHTML = '<p class="hint">Henüz bir blog yazınız yok.</p>';
-          return;
-        }
-
-        blogs.forEach(b => {
-          const card = document.createElement('div');
-          card.className = 'card blog-card';
-          card.style.cursor = 'pointer';
-          card.dataset.id = b.id;
-
-          const cover = b.coverImageUrl ? `<img class="blog-cover" src="${b.coverImageUrl}" alt="${b.title} kapak" />` : '';
-          const statusLabel = b.isPublished ? 'Yayında' : 'Taslak';
-
-          card.innerHTML = `
-            ${cover}
-            <div class="card-body">
-              <h3 style="margin:0 0 6px;">${b.title}</h3>
-              <p class="muted" style="margin:0 0 10px;">Durum: ${statusLabel}</p>
-              <div class="form-actions">
-                <a class="btn btn-sm" href="/blogs/${b.id}/edit" data-action="edit">Düzenle</a>
-                <button class="btn btn-sm btn-danger" data-action="delete">Sil</button>
-                <button class="btn btn-sm" data-action="publish">${b.isPublished ? 'Yayından Çek' : 'Yayınla'}</button>
-              </div>
-            </div>
-          `;
-
-          card.addEventListener('click', (e) => {
-            const target = e.target;
-            const action = target?.getAttribute && target.getAttribute('data-action');
-            if (action) return;
-            window.location.href = '/blogs/' + b.id;
-          });
-
-          card.querySelector('[data-action="delete"]')?.addEventListener('click', async (e) => {
-            e.stopPropagation();
-            if (!confirm('Bu blog yazısını silmek istediğinize emin misiniz?')) return;
-            try {
-              const res = await fetch('/blogs/' + b.id, { method: 'DELETE' });
-              const data = await res.json();
-              if (!res.ok) throw new Error(data?.error || 'Silme başarısız');
-              card.remove();
-            } catch (err) {
-              msgs.innerHTML = '<div class="alert alert-error">' + (err.message || 'Silme sırasında hata') + '</div>';
-            }
-          });
-
-          card.querySelector('[data-action="publish"]')?.addEventListener('click', async (e) => {
-            e.stopPropagation();
-            try {
-              const shouldPublish = !b.isPublished;
-              const res = await fetch('/blogs/' + b.id + '/publish', {
-                method: 'PATCH',
-                headers: { 'Content-Type': 'application/json' },
-                body: JSON.stringify({ publish: shouldPublish })
-              });
-              const result = await res.json();
-              if (!res.ok) throw new Error(result?.error || 'Yayın durumu güncelleme başarısız');
-
-              b.isPublished = !!result.isPublished;
-              const statusP = card.querySelector('.muted');
-              const publishBtn = card.querySelector('[data-action="publish"]');
-              if (statusP) statusP.textContent = 'Durum: ' + (b.isPublished ? 'Yayında' : 'Taslak');
-              if (publishBtn) publishBtn.textContent = b.isPublished ? 'Yayından Çek' : 'Yayınla';
-            } catch (err) {
-              msgs.innerHTML = '<div class="alert alert-error">' + (err.message || 'Yayın durumu değiştirilemedi') + '</div>';
-            }
-          });
-
-          container.appendChild(card);
-        });
+        if (!res.ok) throw new Error(data?.error || data?.message || 'Kullanıcılar yüklenemedi');
+        renderAdminUsers(Array.isArray(data.items) ? data.items : []);
       } catch (err) {
         msgs.innerHTML = '<div class="alert alert-error">' + (err.message || 'Ağ hatası') + '</div>';
       }
     }
 
-    if (activeTab === 'blogs') {
-      loadMyBlogs();
+    function renderAdminUsers(items) {
+      const tbody = document.getElementById('adminUsersTableBody');
+      if (!tbody) return;
+      const currentUserId = "<%= user?.sub || '' %>";
+
+      tbody.innerHTML = items.map(u => {
+        const roles = Array.isArray(u.roles) ? u.roles : [];
+        const has = (r) => roles.includes(r);
+        const disableDelete = String(u._id) === String(currentUserId);
+
+        return `
+          <tr data-id="${u._id}">
+            <td>${u.name || '-'}</td>
+            <td>${u.email || '-'}</td>
+            <td>
+              <label><input type="checkbox" data-role="user" ${has('user') ? 'checked' : ''}> user</label>
+              <label style="margin-left:8px;"><input type="checkbox" data-role="author" ${has('author') ? 'checked' : ''}> author</label>
+              <label style="margin-left:8px;"><input type="checkbox" data-role="admin" ${has('admin') ? 'checked' : ''}> admin</label>
+            </td>
+            <td style="white-space:nowrap;">
+              <button class="btn btn-sm" onclick="handleSaveRoles('${u._id}')">Kaydet</button>
+              <button class="btn btn-sm btn-danger" onclick="handleDeleteUser('${u._id}')" ${disableDelete ? 'disabled title="Kendi hesabınızı silemezsiniz"' : ''}>Sil</button>
+            </td>
+          </tr>
+        `;
+      }).join('');
+    }
+
+    function getSelectedRolesFromRow(row) {
+      const checks = row.querySelectorAll('input[type="checkbox"][data-role]');
+      const roles = Array.from(checks)
+        .filter(c => c.checked)
+        .map(c => String(c.getAttribute('data-role')));
+      return Array.from(new Set(roles));
+    }
+
+    async function handleSaveRoles(id) {
+      const row = document.querySelector(`tr[data-id="${id}"]`);
+      const msgs = document.getElementById('usersMessages');
+      if (!row || !msgs) return;
+
+      const roles = getSelectedRolesFromRow(row);
+      if (!roles.length) {
+        msgs.innerHTML = '<div class="alert alert-error">En az bir rol seçin</div>';
+        return;
+      }
+
+      try {
+        const res = await fetch(`/api/v1/admin/users/${id}/roles`, {
+          method: 'PUT',
+          headers: { 'Content-Type': 'application/json' },
+          credentials: 'same-origin',
+          body: JSON.stringify({ roles })
+        });
+        const data = await res.json();
+        if (!res.ok) throw new Error(data?.error || data?.message || 'Rol güncelleme başarısız');
+        msgs.innerHTML = '<div class="alert alert-success">Roller güncellendi</div>';
+      } catch (err) {
+        msgs.innerHTML = '<div class="alert alert-error">' + (err.message || 'Ağ hatası') + '</div>';
+      }
+    }
+
+    async function handleDeleteUser(id) {
+      const msgs = document.getElementById('usersMessages');
+      if (!msgs) return;
+      if (!confirm('Bu kullanıcıyı silmek istediğinize emin misiniz?')) return;
+
+      try {
+        const res = await fetch(`/api/v1/admin/users/${id}`, {
+          method: 'DELETE',
+          credentials: 'same-origin'
+        });
+        const data = await res.json();
+        if (!res.ok) throw new Error(data?.error || data?.message || 'Silme başarısız');
+
+        const row = document.querySelector(`tr[data-id="${id}"]`);
+        row?.remove();
+        msgs.innerHTML = '<div class="alert alert-success">Kullanıcı silindi</div>';
+      } catch (err) {
+        msgs.innerHTML = '<div class="alert alert-error">' + (err.message || 'Ağ hatası') + '</div>';
+      }
+    }
+
+    if (activeTab === 'users') {
+      loadAdminUsers();
     }
   </script>
+
+  <%- include('../partials/profile/contentCards') %>
+  <%- include('../partials/profile/adminContent') %>
+  <%- include('../partials/profile/myContent') %>
 </body>
 </html>

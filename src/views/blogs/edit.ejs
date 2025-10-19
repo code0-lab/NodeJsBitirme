@@ -25,7 +25,7 @@
 
         <div class="form-group">
           <label for="coverImageUrl">Kapak Görseli URL (opsiyonel)</label>
-          <input type="url" id="coverImageUrl" name="coverImageUrl" class="input" placeholder="https://..." value="<%= blog.coverImageUrl || '' %>" />
+          <input type="text" id="coverImageUrl" name="coverImageUrl" class="input" placeholder="https://..." value="<%= blog.coverImageUrl || '' %>" />
         </div>
 
         <div class="form-group">
@@ -41,6 +41,7 @@
         <div class="form-group">
           <label for="categories">Kategoriler (opsiyonel)</label>
           <select id="categories" name="categories" class="input" multiple size="4">
+            <option value="">-- Lütfen bir kategori seçin (opsiyonel) --</option>
             <% (categories || []).forEach(function(cat){ %>
               <option value="<%= cat._id %>" <%= (blog.categories || []).some(function(c){ return String(c) === String(cat._id) }) ? 'selected' : '' %>><%= cat.name %></option>
             <% }) %>
@@ -52,8 +53,10 @@
           <label><input type="checkbox" id="isPublished" <%= blog.isPublished ? 'checked' : '' %> /> Yayınla</label>
         </div>
 
-        <button type="submit" class="btn">Güncelle</button>
-        <button type="button" id="deleteBtn" class="btn btn-danger" style="margin-left:8px;">Sil</button>
+        <div class="form-actions" style="display:flex; gap:8px; align-items:center; flex-wrap:wrap;">
+          <button type="submit" class="btn">Güncelle</button>
+          <button type="button" id="deleteBtn" class="btn btn-danger">Sil</button>
+        </div>
       </form>
 
       <script>
@@ -72,7 +75,9 @@
           const isPublished = document.getElementById('isPublished').checked;
           const tags = tagsInput ? tagsInput.split(',').map(t => t.trim()).filter(Boolean) : [];
           const categoriesSelect = document.getElementById('categories');
-          const categories = Array.from(categoriesSelect.selectedOptions).map(o => o.value);
+          const categories = Array.from(categoriesSelect.selectedOptions)
+            .map(o => o.value)
+            .filter(v => v); // boş placeholder değerini gönderme
 
           try {
             const res = await fetch('/blogs/' + blogId, {

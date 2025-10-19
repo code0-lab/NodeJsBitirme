@@ -29,7 +29,7 @@ export const getNews = asyncHandler(async (req: Request, res: Response) => {
   return res.json({ item });
 });
 
-// Dosya: apiNewsController.ts içindeki createNews
+// createNews (başı değişmeden kalır)
 export const createNews = asyncHandler(async (req: Request, res: Response) => {
   const user = (req as any).user as DecodedToken | undefined;
   if (!user) throw new AppError(401, 'Yetkisiz: giriş yapın');
@@ -56,16 +56,39 @@ export const updateNews = asyncHandler(async (req: Request, res: Response) => {
   const user = (req as any).user as DecodedToken | undefined;
   const news = await News.findById(req.params.id);
   if (!news) throw new AppError(404, 'Haber bulunamadı');
-  if (!isOwnerOrAdmin(user, news.author)) throw new AppError(403, 'Yetkisiz');
 
-  const { title, content, category, isActive, imageUrl } = req.body;
-  news.title = title ?? news.title;
-  news.content = content ?? news.content;
-  news.category = category ?? news.category;
+  const isAdmin = Array.isArray(user?.roles) ? user!.roles.includes('admin') : (user?.roles === 'admin');
+  const owner = user && String(news.author) === String(user.sub);
+  if (!owner && !isAdmin) throw new AppError(403, 'Yetkisiz');
+
+  // Admin sahibi değilse: yalnızca aktif/pasif durumunu değiştirebilir
+  if (isAdmin && !owner) {
+    const { isActive } = req.body as { isActive?: boolean };
+    const forbiddenKeys = ['title', 'content', 'category', 'imageUrl']
+      .filter(k => typeof (req.body as any)[k] !== 'undefined');
+    if (forbiddenKeys.length) {
+      throw new AppError(403, 'Admin, sahibi olmadığı içeriğin başlık/içerik/görsel alanlarını değiştiremez');
+    }
+    if (typeof isActive !== 'boolean') {
+      throw new AppError(400, 'isActive alanı boolean olmalı');
+    }
+    news.isActive = isActive;
+    await news.save();
+    return res.json({ ok: true, item: news });
+  }
+
+  const { title, content, category, isActive, imageUrl } = req.body as {
+    title?: string; content?: string; category?: any; isActive?: boolean; imageUrl?: string;
+  };
+
+  news.title = typeof title !== 'undefined' ? title : news.title;
+  news.content = typeof content !== 'undefined' ? content : news.content;
+  news.category = typeof category !== 'undefined' ? category : news.category;
   news.isActive = typeof isActive === 'boolean' ? isActive : news.isActive;
   if (typeof imageUrl !== 'undefined') {
     news.imageUrl = imageUrl?.trim() || undefined;
   }
+
   await news.save();
   return res.json({ ok: true, item: news });
 });

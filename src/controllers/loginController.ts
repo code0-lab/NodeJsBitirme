@@ -3,7 +3,8 @@ import { Request, Response } from 'express';
 import { loginUser, AppError } from '../services/authService';
 
 export async function loginForm(req: Request, res: Response) {
-  res.render('auth/login', { title: 'Giriş Yap', errors: [], values: {} });
+  const success = typeof req.query.success === 'string' ? req.query.success : undefined;
+  res.render('auth/login', { title: 'Giriş Yap', errors: [], values: {}, success });
 }
 
 // login(): JWT cookie yerine session’a kullanıcıyı yaz
@@ -12,7 +13,7 @@ export async function login(req: Request, res: Response) {
   const values = { email };
 
   try {
-    const { user } = await loginUser({ email, password });
+    const { user, token } = await loginUser({ email, password });
 
     // Web oturumu: Kullanıcıyı session’a koy
     (req as any).session.user = {
@@ -22,6 +23,14 @@ export async function login(req: Request, res: Response) {
       roles: user.roles,
       profilePicture: user.profilePicture
     };
+
+    // JWT'yi cookie olarak ekle (API çağrıları için)
+    res.cookie('token', token, {
+      httpOnly: true,
+      sameSite: 'lax',
+      secure: process.env.NODE_ENV === 'production',
+      maxAge: 60 * 60 * 1000
+    });
 
     return res.redirect('/');
   } catch (err) {

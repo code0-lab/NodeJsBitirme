@@ -1,0 +1,11 @@
+<aside class="card settings-sidebar" aria-label="Ayarlar">
+  <a href="/auth/profile?tab=edit" class="settings-link <%= tab === 'edit' ? 'active' : '' %>">Profili Düzenle</a>
+  <a href="/auth/profile?tab=privacy" class="settings-link <%= tab === 'privacy' ? 'active' : '' %>">Hesap Gizliliği</a>
+  <a href="/auth/profile?tab=comments" class="settings-link <%= tab === 'comments' ? 'active' : '' %>">Yorumlar</a>
+  <a href="/auth/profile?tab=blogs" class="settings-link <%= tab === 'blogs' ? 'active' : '' %>">
+    <%= (user?.roles && user.roles.includes('admin')) ? 'Site içeriği' : 'İçeriğim' %>
+  </a>
+  <% if (user?.roles && user.roles.includes('admin')) { %>
+    <a href="/auth/profile?tab=users" class="settings-link <%= tab === 'users' ? 'active' : '' %>">Kullanıcılar</a>
+  <% } %>
+</aside>

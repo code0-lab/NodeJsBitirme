@@ -11,6 +11,7 @@ export interface INews {
   imageUrl?: string;
   likesID?: mongoose.Types.ObjectId[]; // beğenen kullanıcı id'leri
   dislikesID?: mongoose.Types.ObjectId[]; // beğenmeyen kullanıcı id'leri
+  comments?: mongoose.Types.ObjectId[]; // yorum id'leri
 }
 
 const NewsSchema: Schema<INews> = new Schema(
@@ -23,9 +24,9 @@ const NewsSchema: Schema<INews> = new Schema(
     category: { type: Schema.Types.ObjectId, ref: "Category" },
     author: { type: Schema.Types.ObjectId, ref: "User", required: true },
     isActive: { type: Boolean, default: false },
-    // like/dislike numeric alanları kaldırıldı, ID dizileri eklendi
     likesID: [{ type: Schema.Types.ObjectId, ref: "User", default: [] }],
-    dislikesID: [{ type: Schema.Types.ObjectId, ref: "User", default: [] }]
+    dislikesID: [{ type: Schema.Types.ObjectId, ref: "User", default: [] }],
+    comments: [{ type: Schema.Types.ObjectId, ref: "Comment", default: [] }]
   },
   {
     timestamps: true

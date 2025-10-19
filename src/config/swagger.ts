@@ -3,6 +3,8 @@ import { authPaths } from './swagger/auth';
 import { blogPaths, blogSchemas } from './swagger/blogs';
 import { newsPaths, newsSchemas } from './swagger/news';
 import { categoryPaths, categorySchemas } from './swagger/categories';
+import { profilePaths, profileSchemas } from './swagger/profile';
+import { commentPaths, commentSchemas } from './swagger/comments';
 
 export const swaggerSpec = {
   ...baseSpec,
@@ -11,7 +13,9 @@ export const swaggerSpec = {
     ...authPaths,
     ...blogPaths,
     ...newsPaths,
-    ...categoryPaths
+    ...categoryPaths,
+    ...profilePaths,
+    ...commentPaths
   },
   components: {
     ...baseSpec.components,
@@ -22,7 +26,9 @@ export const swaggerSpec = {
       ...(baseSpec.components.schemas || {}),
       ...blogSchemas,
       ...newsSchemas,
-      ...categorySchemas
+      ...categorySchemas,
+      ...profileSchemas,
+      ...commentSchemas
     }
   }
 };

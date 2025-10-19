@@ -83,7 +83,25 @@ export async function updateBlog(req: Request, res: Response) {
     const user = (req as any).user as DecodedToken | undefined;
     const blog = await Blog.findById(req.params.id);
     if (!blog) return res.status(404).json({ error: 'Blog bulunamadı' });
-    if (!isOwnerOrAdmin(user, blog.author)) return res.status(403).json({ error: 'Yetkisiz' });
+
+    const isAdmin = Array.isArray(user?.roles) ? user!.roles.includes('admin') : (user?.roles === 'admin');
+    const owner = user && String(blog.author) === String(user.sub);
+    if (!owner && !isAdmin) return res.status(403).json({ error: 'Yetkisiz' });
+
+    // Admin sahibi değilse: yalnızca yayın durumunu değiştirebilir
+    if (isAdmin && !owner) {
+      const { isPublished } = req.body as { isPublished?: boolean };
+      const forbiddenKeys = ['title', 'content', 'tags', 'categories', 'coverImageUrl'].filter(k => typeof (req.body as any)[k] !== 'undefined');
+      if (forbiddenKeys.length) {
+        return res.status(403).json({ error: 'Admin, sahibi olmadığı içeriğin başlık/içerik/görsel alanlarını değiştiremez' });
+      }
+      if (typeof isPublished !== 'boolean') {
+        return res.status(400).json({ error: 'isPublished alanı boolean olmalı' });
+      }
+      blog.isPublished = isPublished;
+      await blog.save();
+      return res.json({ ok: true, item: blog });
+    }
 
     const { title, content, tags, categories, coverImageUrl, isPublished } = req.body;
     blog.title = title ?? blog.title;
@@ -91,7 +109,7 @@ export async function updateBlog(req: Request, res: Response) {
     blog.tags = tags ?? blog.tags;
     blog.categories = categories ?? blog.categories;
     blog.coverImageUrl = coverImageUrl ?? blog.coverImageUrl;
-    blog.isPublished = isPublished ?? blog.isPublished;
+    blog.isPublished = typeof isPublished === 'boolean' ? isPublished : blog.isPublished;
 
     await blog.save();
     return res.json({ ok: true, item: blog });

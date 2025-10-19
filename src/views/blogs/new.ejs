@@ -17,7 +17,7 @@
       <h1 class="auth-title">Yeni Blog Yazısı</h1>
       <div id="alert" class="alert" style="display:none;"></div>
 
-      <form id="blogForm" class="form" method="post" action="/blogs">
+      <form id="blogForm" class="form" method="post" action="/blogs" novalidate>
         <div class="form-group">
           <label for="title">Başlık</label>
           <input type="text" id="title" name="title" class="input" required />
@@ -25,7 +25,7 @@
 
         <div class="form-group">
           <label for="coverImageUrl">Kapak Görseli URL (opsiyonel)</label>
-          <input type="url" id="coverImageUrl" name="coverImageUrl" class="input" placeholder="https://..." />
+          <input type="text" id="coverImageUrl" name="coverImageUrl" class="input" placeholder="https://..." />
         </div>
 
         <div class="form-group">
@@ -41,6 +41,7 @@
         <div class="form-group">
           <label for="categories">Kategoriler (opsiyonel)</label>
           <select id="categories" name="categories" class="input" multiple size="4">
+            <option value="">-- Lütfen bir kategori seçin (opsiyonel) --</option>
             <% (categories || []).forEach(function(cat){ %>
               <option value="<%= cat._id %>"><%= cat.name %></option>
             <% }) %>
@@ -69,8 +70,10 @@
           const isPublished = document.getElementById('isPublished').checked;
           const tags = tagsInput ? tagsInput.split(',').map(t => t.trim()).filter(Boolean) : [];
           const categoriesSelect = document.getElementById('categories');
-          const categories = Array.from(categoriesSelect.selectedOptions).map(o => o.value);
-      
+          const categories = Array.from(categoriesSelect.selectedOptions)
+            .map(o => o.value)
+            .filter(v => v); // boş placeholder değerini gönderme
+
           try {
             const res = await fetch('/blogs', {
               method: 'POST',

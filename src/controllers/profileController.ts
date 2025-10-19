@@ -6,6 +6,7 @@ import { isValidEmail, isValidPassword } from '../utils/validators';
 import { asyncHandler } from '../utils/asyncHandler';
 import { AppError } from '../services/authService';
 import Blog from '../models/blogModel';
+import News from '../models/newsModel';
 
 export function logout(req: Request, res: Response) {
     req.session?.destroy(() => {
@@ -210,4 +211,22 @@ export const myBlogs = asyncHandler(async (req: Request, res: Response) => {
   }));
 
   return res.json({ ok: true, blogs });
+});
+
+// Kullanıcının yazdığı haberleri listele (JSON)
+export const myNews = asyncHandler(async (req: Request, res: Response) => {
+  const userId = (req as any).session?.user?.sub || (req as any).user?.sub;
+  if (!userId) throw new AppError(401, 'Giriş gerekli');
+
+  const docs = await News.find({ author: userId }).sort({ createdAt: -1 }).lean();
+
+  const news = docs.map((n: any) => ({
+    id: String(n._id),
+    title: n.title,
+    imageUrl: n.imageUrl || null,
+    isActive: !!n.isActive,
+    createdAt: n.createdAt ? new Date(n.createdAt).toISOString() : null
+  }));
+
+  return res.json({ ok: true, news });
 });

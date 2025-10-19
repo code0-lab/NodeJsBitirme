@@ -11,7 +11,9 @@ export const baseSpec = {
     { name: 'Auth', description: 'Kayıt ve giriş' },
     { name: 'Blogs', description: 'Blog CRUD' },
     { name: 'News', description: 'Haber CRUD ve reaksiyonlar' },
-    { name: 'Categories', description: 'Kategori listeleme ve oluşturma' }
+    { name: 'Categories', description: 'Kategori listeleme ve oluşturma' },
+    { name: 'Profile', description: 'Profil bilgileri ve şifre işlemleri' },
+    { name: 'Comments', description: 'Yorum oluşturma, listeleme, güncelleme ve silme' }
   ],
   paths: {},
   components: {

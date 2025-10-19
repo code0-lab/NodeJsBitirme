@@ -13,6 +13,7 @@ export interface IBlog extends Document {
   updatedAt: Date;
   likesID?: mongoose.Types.ObjectId[]; // beğenen kullanıcı id'leri
   dislikesID?: mongoose.Types.ObjectId[]; // beğenmeyen kullanıcı id'leri
+  comments?: mongoose.Types.ObjectId[]; // yorum id'leri
 }
 
 const blogSchema = new Schema<IBlog>(
@@ -26,7 +27,8 @@ const blogSchema = new Schema<IBlog>(
     isPublished: { type: Boolean, default: false },
     publishedAt: { type: Date },
     likesID: [{ type: Schema.Types.ObjectId, ref: 'User', default: [] }],
-    dislikesID: [{ type: Schema.Types.ObjectId, ref: 'User', default: [] }]
+    dislikesID: [{ type: Schema.Types.ObjectId, ref: 'User', default: [] }],
+    comments: [{ type: Schema.Types.ObjectId, ref: 'Comment', default: [] }]
   },
   { timestamps: true }
 );
