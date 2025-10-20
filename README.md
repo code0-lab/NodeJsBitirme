@@ -145,13 +145,14 @@ Aşağıda uygulamanın farklı bölümlerine ait örnek ekran görüntülerini 
 Platformun giriş sayfası ve gezinme menüsü.
 ![Ana Sayfa](./images/home.png)
 
+#### Profil Düzenleme
+Kişisel bilgiler, şifre değişimi ve avatar yükleme.
+(küçük ekranda, responsive)
+![Profil Düzenleme](./images/profile.png)
+
 #### 403
 Erişim reddedildi sayfası.
 ![403](./images/403.png)
-
-#### Profil Düzenleme
-Kişisel bilgiler, şifre değişimi ve avatar yükleme.
-![Profil Düzenleme](./images/profile.png)
 
 #### Görseller 
 
