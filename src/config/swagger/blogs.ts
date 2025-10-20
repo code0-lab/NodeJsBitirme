@@ -32,7 +32,15 @@ export const blogPaths = {
         required: true,
         content: {
           'application/json': {
-            schema: { $ref: '#/components/schemas/BlogCreate' }
+            schema: { $ref: '#/components/schemas/BlogCreate' },
+            example: {
+              title: 'Where does it come from?',
+              content: 'Contrary to popular belief, Lorem Ipsum is not simply random text. It has roots in a piece of classical Latin literature from 45 BC. It comes from sections 1.10.32 and 1.10.33 of "de Finibus Bonorum et Malorum" by Cicero. The first line of Lorem Ipsum, "Lorem ipsum dolor sit amet..", comes from section 1.10.32.',
+              tags: ['lorem', 'ipsum'],
+              categories: ['64f0e9a9c5a0f51b3a7f2d10'],
+              coverImageUrl: 'https://example.com/cover.jpg',
+              isPublished: true
+            }
           }
         }
       },

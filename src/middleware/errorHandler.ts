@@ -1,6 +1,12 @@
 import { Request, Response, NextFunction } from 'express';
 
+function isJsonParseError(err: any): boolean {
+  return err?.type === 'entity.parse.failed' ||
+    (err instanceof SyntaxError && (err as any).status === 400 && 'body' in err);
+}
+
 function toHttpStatus(err: any): number {
+  if (isJsonParseError(err)) return 400;
   if (typeof err?.status === 'number') return err.status;
   if (err?.name === 'ValidationError') return 400;
   if (err?.name === 'CastError') return 400;
@@ -8,6 +14,18 @@ function toHttpStatus(err: any): number {
 }
 
 function toApiPayload(err: any) {
+  if (isJsonParseError(err)) {
+    return {
+      error: 'Geçersiz JSON',
+      code: 'INVALID_JSON',
+      details: [
+        `JSON gövde parse edilemedi: ${err?.message || 'geçersiz JSON'}`,
+        'Anahtarlar ve stringler çift tırnakla yazılmalı',
+        'İçerideki çift tırnakları \\" olarak kaçırın',
+        'Fazladan virgülleri ve yorum satırlarını kullanmayın'
+      ]
+    };
+  }
   if (err?.name === 'ValidationError' && err?.errors) {
     return {
       error: 'Validasyon hatası',
@@ -32,7 +50,6 @@ export function errorHandler(err: any, req: Request, res: Response, _next: NextF
   const isApi = req.path.startsWith('/api');
   const status = toHttpStatus(err);
 
-  // Minimally log; ileri seviye için logger entegrasyonu (winston/pino) eklenebilir
   if (process.env.NODE_ENV !== 'test') {
     console.error(`[Error] ${req.method} ${req.originalUrl} -> ${status}:`, err);
   }
@@ -41,11 +58,11 @@ export function errorHandler(err: any, req: Request, res: Response, _next: NextF
     return res.status(status).json(toApiPayload(err));
   }
 
-  const message = err?.message || 'Beklenmeyen hata';
+  const message = isJsonParseError(err) ? 'Geçersiz JSON gövde' : (err?.message || 'Beklenmeyen hata');
   return res
     .status(status >= 400 ? status : 500)
     .render('errors/500', {
-      title: 'Sunucu Hatası',
+      title: isJsonParseError(err) ? 'Geçersiz JSON' : 'Sunucu Hatası',
       message,
       stack: process.env.NODE_ENV === 'development' ? err?.stack : undefined
     });
