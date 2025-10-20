@@ -87,6 +87,7 @@
       const newsTpl = newsTplEl ? newsTplEl.innerHTML : '';
       const blogTpl = blogTplEl ? blogTplEl.innerHTML : '';
 
+      // Haberler
       if (!newsSlice.length) {
         newsContainer.innerHTML = '<p class="hint">Haber bulunamadı.</p>';
       } else {
@@ -95,29 +96,74 @@
             ? `<img class="blog-cover" src="${n.imageUrl}" alt="${escapeHtml(n.title)} kapak" />`
             : `<div class="blog-cover blog-cover-placeholder"></div>`;
           const statusLabel = typeof n.isActive === 'boolean' ? (n.isActive ? 'Aktif' : 'Pasif') : '—';
+          const toggleText = typeof n.isActive === 'boolean' ? (n.isActive ? 'Gizle' : 'Yayınla') : 'Yayınla';
+
           const wrapper = document.createElement('div');
           wrapper.innerHTML = newsTpl
             .replace(/{{id}}/g, getId(n))
             .replace('{{cover}}', coverMarkup)
             .replace(/{{title}}/g, escapeHtml(n.title))
-            .replace(/{{status}}/g, escapeHtml(statusLabel));
+            .replace(/{{status}}/g, escapeHtml(statusLabel))
+            .replace(/{{toggleText}}/g, escapeHtml(toggleText));
+
           const card = wrapper.firstElementChild;
           if (!card) return;
 
-          // Arama modunda aksiyonları sadeleştir: sadece "Görüntüle"
+          // Arama modunda aksiyonları sadeleştir: “Düzenle”
           if (isSearchMode) {
             const actions = card.querySelector('.form-actions');
-            if (actions) actions.innerHTML = `<a class="btn btn-sm" href="/news/${getId(n)}" data-action="view">Görüntüle</a>`;
+            if (actions) actions.innerHTML = `<a class="btn btn-sm" href="/news/${getId(n)}/edit" data-action="edit">Düzenle</a>`;
           }
 
+          // Kart tıklaması: detay sayfasına git
           card.addEventListener('click', (e) => {
             const action = e.target?.getAttribute && e.target.getAttribute('data-action');
             if (action) return;
             window.location.href = '/news/' + getId(n);
           });
-          card.querySelector('[data-action="view"]')?.addEventListener('click', (e) => {
+          // Düzenle
+          card.querySelector('[data-action="edit"]')?.addEventListener('click', (e) => {
             e.stopPropagation();
-            window.location.href = '/news/' + getId(n);
+            window.location.href = '/news/' + getId(n) + '/edit';
+          });
+          // Sil
+          card.querySelector('[data-action="news-delete"]')?.addEventListener('click', async (e) => {
+            e.stopPropagation();
+            if (!confirm('Bu haberi silmek istediğinize emin misiniz?')) return;
+            try {
+              const res = await fetch('/api/v1/news/' + getId(n), {
+                method: 'DELETE',
+                credentials: 'same-origin'
+              });
+              const result = await res.json().catch(() => ({}));
+              if (!res.ok) throw new Error(result?.error || 'Silme başarısız');
+              card.remove();
+            } catch (err) {
+              if (msgs) msgs.innerHTML = '<div class="alert alert-error">' + (err.message || 'Silme sırasında hata') + '</div>';
+            }
+          });
+          // Yayında/Gizli durumunu değiştir
+          card.querySelector('[data-action="news-toggle"]')?.addEventListener('click', async (e) => {
+            e.stopPropagation();
+            try {
+              const shouldActive = !n.isActive;
+              const res = await fetch('/api/v1/news/' + getId(n), {
+                method: 'PUT',
+                headers: { 'Content-Type': 'application/json' },
+                credentials: 'same-origin',
+                body: JSON.stringify({ isActive: shouldActive })
+              });
+              const result = await res.json();
+              if (!res.ok) throw new Error(result?.error || result?.message || 'Durum güncelleme başarısız');
+
+              n.isActive = !!(result?.item?.isActive ?? shouldActive);
+              const statusP = card.querySelector('.blog-card-status') || card.querySelector('.muted');
+              const toggleBtn = card.querySelector('[data-action="news-toggle"]');
+              if (statusP) statusP.textContent = 'Durum: ' + (n.isActive ? 'Yayında' : 'Taslak');
+              if (toggleBtn) toggleBtn.textContent = n.isActive ? 'Gizle' : 'Yayınla';
+            } catch (err) {
+              if (msgs) msgs.innerHTML = '<div class="alert alert-error">' + (err.message || 'Durum değiştirilemedi') + '</div>';
+            }
           });
 
           newsContainer.appendChild(card);

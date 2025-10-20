@@ -20,7 +20,9 @@
       <form id="newsForm" class="form" method="post" action="/news">
         <div class="form-group">
           <label for="title">Başlık</label>
-          <input type="text" id="title" name="title" class="input" required />
+          <input type="text" id="title" name="title" class="input" required minlength="2" maxlength="120" />
+          <small class="hint">Başlık 2–120 karakter olmalı.</small>
+          <div id="titleError" class="field-error"></div>
         </div>
 
         <div class="form-group">
@@ -30,7 +32,9 @@
 
         <div class="form-group">
           <label for="content">İçerik</label>
-          <textarea id="content" name="content" class="input" rows="8" required></textarea>
+          <textarea id="content" name="content" class="input" rows="8" required minlength="150" maxlength="4000"></textarea>
+          <small class="hint">İçerik 150–4000 karakter olmalı.</small>
+          <div id="contentError" class="field-error"></div>
         </div>
 
         <div class="form-group">
@@ -54,24 +58,61 @@
         const form = document.getElementById('newsForm');
         const alertBox = document.getElementById('alert');
 
+        // Alan bazlı hata gösterimi
+        function setFieldError(inputEl, msg) {
+          const el = document.getElementById(inputEl.id + 'Error');
+          if (!el) return;
+          if (msg) {
+            el.textContent = msg;
+            inputEl.setAttribute('aria-invalid', 'true');
+          } else {
+            el.textContent = '';
+            inputEl.removeAttribute('aria-invalid');
+          }
+        }
+
         form.addEventListener('submit', async (e) => {
           e.preventDefault();
-          try {
-            const title = document.getElementById('title').value.trim();
-            const imageUrl = document.getElementById('imageUrl').value.trim();
-            const content = document.getElementById('content').value.trim();
-            const category = document.getElementById('category').value;
-            const isActive = document.getElementById('isActive').checked;
 
+          const titleInput = document.getElementById('title');
+          const imageUrlInput = document.getElementById('imageUrl');
+          const contentInput = document.getElementById('content');
+          const categoryInput = document.getElementById('category');
+          const isActiveInput = document.getElementById('isActive');
+
+          // Hataları sıfırla
+          setFieldError(titleInput, '');
+          setFieldError(contentInput, '');
+          alertBox.textContent = '';
+          alertBox.style.display = 'none';
+
+          const title = titleInput.value.trim();
+          const content = contentInput.value.trim();
+
+          // Başlık ve içerik sınırları
+          if (title.length < 2 || title.length > 120) {
+            setFieldError(titleInput, 'Başlık 2–120 karakter olmalı');
+            alertBox.textContent = 'Formda hatalar var, lütfen düzeltin.';
+            alertBox.style.display = 'block';
+            return;
+          }
+          if (content.length < 150 || content.length > 4000) {
+            setFieldError(contentInput, 'İçerik 150–4000 karakter olmalı');
+            alertBox.textContent = 'Formda hatalar var, lütfen düzeltin.';
+            alertBox.style.display = 'block';
+            return;
+          }
+
+          try {
             const res = await fetch('/news', {
               method: 'POST',
               headers: { 'Content-Type': 'application/json' },
               body: JSON.stringify({
                 title,
-                imageUrl: imageUrl || undefined,
+                imageUrl: imageUrlInput.value.trim() || undefined,
                 content,
-                category: category || undefined,
-                isActive
+                category: categoryInput.value || undefined,
+                isActive: isActiveInput.checked
               })
             });
 

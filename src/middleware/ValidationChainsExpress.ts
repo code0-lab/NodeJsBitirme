@@ -165,7 +165,13 @@ export function handleValidation(req: any, res: any, next: any) {
     ? { error: 'Geçersiz ID parametresi', code: 'CAST_ERROR', details }
     : { error: 'Validasyon hatası', code: 'VALIDATION_ERROR', details };
 
-  if (String(req.path || '').startsWith('/api')) {
+  // API algılama: originalUrl/baseUrl/path hepsini kontrol et
+  const isApi =
+    String(req.originalUrl || req.url || '').startsWith('/api') ||
+    String(req.baseUrl || '').startsWith('/api') ||
+    String(req.path || '').startsWith('/api');
+  
+  if (isApi) {
     return res.status(400).json(payload);
   }
   return res.status(400).render('errors/500', {

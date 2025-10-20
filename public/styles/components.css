@@ -41,9 +41,9 @@ input[type="text"], input[type="email"], input[type="password"] {
 
 /* Dark mode: dolu butonları açık palete çek, outline uyumlu kalsın */
 body.theme-dark .btn {
-  background: #eef3fb;    /* açık arka plan (beyaz tonlu) */
-  color: #0a0f14;         /* koyu yazı rengi */
-  border-color: #eef3fb;  /* kenarlık arka planla uyumlu */
+  background: #eef3fb;
+  color: #0a0f14;
+  border-color: #eef3fb;
 }
 body.theme-dark .btn.outline {
   background: transparent;
@@ -244,4 +244,20 @@ body.theme-dark .btn.outline {
   -webkit-line-clamp: 4;
   -webkit-box-orient: vertical;
   overflow: hidden;
+}
+
+/* Danger (kırmızı) buton */
+.btn.btn-danger {
+  background: #d93025;
+  border-color: #d93025;
+  color: #fff;
+}
+.btn.btn-danger:hover {
+  opacity: 0.95;
+}
+/* Koyu tema: kırmızı butonun rengini koru */
+body.theme-dark .btn.btn-danger {
+  background: #d93025;
+  border-color: #d93025;
+  color: #fff;
 }

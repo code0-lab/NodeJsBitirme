@@ -8,7 +8,8 @@ import {
   changePassword,
   uploadProfilePicture,
   myBlogs,
-  myNews
+  myNews,
+  deleteMe
 } from '../controllers/profileController';
 import { authenticateWeb } from '../controllers/authController';
 import multer from 'multer';
@@ -35,5 +36,6 @@ router.post('/profile/password', authenticateWeb, profileChangePasswordRules, ha
 router.post('/profile/picture', authenticateWeb, multer({ dest: path.join(__dirname, '../../public/uploads/avatars') }).single('avatar'), uploadProfilePicture);
 router.get('/profile/blogs', authenticateWeb, myBlogs);
 router.get('/profile/news', authenticateWeb, myNews);
+router.delete('/profile', authenticateWeb, deleteMe);
 router.get('/logout', logout);
 export default router;

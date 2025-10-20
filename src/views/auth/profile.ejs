@@ -206,6 +206,27 @@
     if (activeTab === 'users') {
       loadAdminUsers();
     }
+
+    // Hesabı sil butonu
+    const deleteBtn = document.getElementById('deleteAccountBtn');
+    if (deleteBtn) {
+      deleteBtn.addEventListener('click', async () => {
+        const msgs = document.getElementById('accountMessages');
+        if (!confirm('Hesabınızı kalıcı olarak silmek istiyor musunuz?')) return;
+        if (msgs) msgs.innerHTML = '';
+        try {
+          const res = await fetch('/auth/profile', {
+            method: 'DELETE',
+            credentials: 'same-origin'
+          });
+          const data = await res.json();
+          if (!res.ok) throw new Error(data?.error || data?.message || 'Silme başarısız');
+          window.location.href = '/';
+        } catch (err) {
+          if (msgs) msgs.innerHTML = '<div class="alert alert-error">' + (err.message || 'Ağ hatası') + '</div>';
+        }
+      });
+    }
   </script>
 
   <%- include('../partials/profile/contentCards') %>

@@ -82,3 +82,30 @@ export const createNews = asyncHandler(async (req: Request, res: Response) => {
 
   return res.status(201).json({ ok: true, item: doc });
 });
+
+// Düzenleme formu
+export const editNewsForm = asyncHandler(async (req: Request, res: Response) => {
+  const user = (req as any).user as DecodedToken | undefined;
+  if (!user) throw new AppError(401, 'Yetkisiz: giriş yapın');
+
+  const news = await News.findById(req.params.id);
+  if (!news) {
+    return res.status(404).render('errors/404', { title: '404 - Haber Bulunamadı' });
+  }
+
+  const isOwner = String(news.author) === String(user.sub);
+  const isAdmin = Array.isArray(user.roles) && user.roles.includes('admin');
+  if (!isOwner && !isAdmin) throw new AppError(403, 'Bu haberi düzenleme yetkiniz yok');
+
+  const categories = await Category.find({ isActive: true, kind: { $in: ['news', 'both'] } })
+    .sort({ name: 1 })
+    .lean();
+
+  return res.render('news/edit', {
+    title: 'Haberi Düzenle',
+    news: news.toObject(),
+    categories,
+    isOwner,
+    isAdmin
+  });
+});

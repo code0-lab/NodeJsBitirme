@@ -39,15 +39,22 @@ function toApiPayload(err: any) {
   return { error: err?.message || 'Beklenmeyen hata' };
 }
 
+function isApiRequest(req: Request): boolean {
+  const url = String(req.originalUrl || req.url || '');
+  const base = String((req as any).baseUrl || '');
+  const path = String(req.path || '');
+  return url.startsWith('/api') || base.startsWith('/api') || path.startsWith('/api');
+}
+
 export function notFoundHandler(req: Request, res: Response, next: NextFunction) {
-  if (req.path.startsWith('/api')) {
+  if (isApiRequest(req)) {
     return next(Object.assign(new Error('Endpoint bulunamadı'), { status: 404 }));
   }
   return res.status(404).render('errors/404', { title: '404 - Sayfa Bulunamadı' });
 }
 
 export function errorHandler(err: any, req: Request, res: Response, _next: NextFunction) {
-  const isApi = req.path.startsWith('/api');
+  const isApi = isApiRequest(req);
   const status = toHttpStatus(err);
 
   if (process.env.NODE_ENV !== 'test') {
