@@ -145,21 +145,14 @@ Aşağıda uygulamanın farklı bölümlerine ait örnek ekran görüntülerini 
 Platformun giriş sayfası ve gezinme menüsü.
 ![Ana Sayfa](./images/home.png)
 
+#### Profil Düzenleme
+Kişisel bilgiler, şifre değişimi ve avatar yükleme.
+(küçük ekranda, responsive)
+![Profil Düzenleme](./images/profile.png)
+
 #### 403
 Erişim reddedildi sayfası.
 ![403](./images/403.png)
-
-#### Profil Düzenleme
-Kişisel bilgiler, şifre değişimi ve avatar yükleme.
-![Profil Düzenleme](./images/profile.png)
-
-#### Görseller 
-
-`images/` klasörüne kopyalayın ve aşağıdaki göreli yolları kullanın:
-![Görsel 1](./images/image1.png)
-![Görsel 2](./images/image2.png)
-![Görsel 3](./images/image3.png)
-
 ---
 
 ### Test
@@ -175,3 +168,13 @@ npm test
 
 - Katkılar PR ve issue’lar üzerinden memnuniyetle kabul edilir.
 - Lisans: ISC (`package.json`).
+
+
+### Swagger (API Dokümantasyonu)
+Swagger UI üzerinden API uç noktalarını keşfedip deneyebilirsiniz.
+- Adres: `http://localhost:<PORT>/api-docs`
+- Güvenlik: `Authorize` düğmesine tıklayıp JWT access tokenınızı girin (Bearer).
+- Sunucu URL’i: `.env` `PORT` değerine göre ayarlanır (bkz. `src/config/swagger/base.ts`).
+- Token alma: `POST /api/v1/auth/login` ile giriş yaptıktan sonra dönen `token`’ı kullanın.
+
+![Swagger](./images/swagger.png)
