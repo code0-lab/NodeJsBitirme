@@ -145,7 +145,7 @@ Aşağıda uygulamanın farklı bölümlerine ait örnek ekran görüntülerini 
 Platformun giriş sayfası ve gezinme menüsü.
 ![Ana Sayfa](./images/home.png)
 
-#### Profil Düzenleme
+#### Profil Düzenleme (Sıradan kullanıcı "user")
 Kişisel bilgiler, şifre değişimi ve avatar yükleme.
 (küçük ekranda, responsive)
 ![Profil Düzenleme](./images/profile.png)
