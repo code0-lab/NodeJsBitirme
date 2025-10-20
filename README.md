@@ -145,21 +145,13 @@ Aşağıda uygulamanın farklı bölümlerine ait örnek ekran görüntülerini 
 Platformun giriş sayfası ve gezinme menüsü.
 ![Ana Sayfa](./images/home.png)
 
-#### Blog Detay
-Blog içerik görünümü ve yorumlar bileşeni.
-![Blog Detay](./images/blog-detail.png)
-
-#### Haberler
-Haber listesi ve arama paneli.
-![Haberler](./images/news.png)
+#### 403
+Erişim reddedildi sayfası.
+![403](./images/403.png)
 
 #### Profil Düzenleme
 Kişisel bilgiler, şifre değişimi ve avatar yükleme.
-![Profil Düzenleme](./images/profile-edit.png)
-
-#### Admin Paneli
-Kullanıcı ve içerik yönetimi, yayın/aktif durumları.
-![Admin Paneli](./images/admin.png)
+![Profil Düzenleme](./images/profile.png)
 
 #### Görseller 
 
