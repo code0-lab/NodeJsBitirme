@@ -21,6 +21,9 @@ import { errorHandler, notFoundHandler } from './middleware/errorHandler';
 
 const app = express();
 
+const adminInitializer = require('./config/admiSeed');
+adminInitializer(); // Uygulama başlarken varsayılan admini oluştur
+
 // View engine: EJS (ortama göre doğru klasörü bul)
 const candidateViewPaths = [
   path.join(__dirname, 'views'),                // ts-node-dev (src/views)

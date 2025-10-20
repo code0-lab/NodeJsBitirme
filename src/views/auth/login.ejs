@@ -67,8 +67,24 @@
         <div class="form-actions">
           <button type="submit" class="btn">Giriş Yap</button>
           <a href="/auth/register" class="btn outline">Kayıt Ol</a>
+          <a id="testUsersLink" href="#" style="color:#0d6efd; text-decoration: underline; margin-left: 8px; cursor: pointer;">Test Kullanıcıları</a>
         </div>
       </form>
+
+      <section id="testUsersPanel" class="card" style="display:none; margin-top:12px;">
+        <h2 class="card-title" style="margin-top:0;">Test Kullanıcıları</h2>
+        <p class="hint">Test Kullanıcıları.</p>
+        <div class="table-wrapper">
+          <table class="table">
+            <thead>
+              <tr><th>E-posta</th><th>Şifre</th></tr>
+            </thead>
+            <tbody>
+              <tr><td>admin@example.com</td><td>12345678</td></tr>
+            </tbody>
+          </table>
+        </div>
+      </section>
     </section>
   </main>
   <%- include('../partials/footer') %>
@@ -210,5 +226,16 @@
         clientErrorWrapper.style.display = '';
       }
     });
+  })();
+  (function(){
+    var link = document.getElementById('testUsersLink');
+    var panel = document.getElementById('testUsersPanel');
+    if (link && panel) {
+      link.addEventListener('click', function(e){
+        e.preventDefault();
+        var hidden = panel.style.display === 'none' || panel.style.display === '';
+        panel.style.display = hidden ? 'block' : 'none';
+      });
+    }
   })();
 </script>

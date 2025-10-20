@@ -60,8 +60,8 @@ export const authPaths = {
               }
             },
             example: {
-              email: 'user@example.com',
-              password: 'Password123!'
+              email: 'admin@example.com',
+              password: '12345678'
             }
           }
         }
