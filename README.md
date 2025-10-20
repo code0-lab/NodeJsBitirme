@@ -153,14 +153,6 @@ Kişisel bilgiler, şifre değişimi ve avatar yükleme.
 #### 403
 Erişim reddedildi sayfası.
 ![403](./images/403.png)
-
-#### Görseller 
-
-`images/` klasörüne kopyalayın ve aşağıdaki göreli yolları kullanın:
-![Görsel 1](./images/image1.png)
-![Görsel 2](./images/image2.png)
-![Görsel 3](./images/image3.png)
-
 ---
 
 ### Test
