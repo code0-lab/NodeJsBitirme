@@ -227,6 +227,10 @@ body.theme-dark .dropdown-toggle:hover .hamburger .line {
   cursor: pointer;
 }
 .dropdown-item:hover { background: rgba(0, 0, 0, 0.06); }
+.dropdown-item.dropdown-danger { color: #d32f2f; font-weight: 600; }
+.dropdown-item.dropdown-danger:hover { background: rgba(211, 47, 47, 0.12); }
+body.theme-dark .dropdown-item.dropdown-danger { color: #ff6b6b; }
+body.theme-dark .dropdown-item.dropdown-danger:hover { background: rgba(255, 107, 107, 0.15); }
 
 /* Marka (rune) hover: metin <-> runik geçişi */
 .rune {

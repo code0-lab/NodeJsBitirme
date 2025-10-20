@@ -150,6 +150,10 @@ Kişisel bilgiler, şifre değişimi ve avatar yükleme.
 (küçük ekranda, responsive)
 ![Profil Düzenleme](./images/profile.png)
 
+#### Profil Paneli İçine Entegre Yönetici Paneli
+Yönetici (Admin), kendi profil sayfasından kullanıcıları ve site içeriğini yönetebilir.
+![Admin Panel](./images/IntegratedAdminPanel.png)
+
 #### 403
 Erişim reddedildi sayfası.
 ![403](./images/403.png)
